@@ -1,0 +1,14 @@
+.idea/
+*.pyc
+~*/
+.vscode/
+
+.flaskenv
+.env
+config.py
+logs/
+migrations/
+app/botdb
+app/botdb.db
+app/sqlite3.exe
+sqlite3.exe
