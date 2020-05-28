@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    <h2>User Manual: </h2>
+
+    <br>How to use a bot command:
+<br>Simply type a exclamation mark '!' then the command name to use the command.
+<br>Example:
+<br>!profquote
+<br>
+<br>To see a list of the available commands, type "!help".
+<br>
+<br>The bot has hardcoded commands and the capability for admins on the flask site to add additional custom commands. The hardcoded commands are:
+<ul>
+    <li>!register: Allows users of the OC discord to input information about themselves into the bot (first name, program & year) using a SQLite database.
+        This information is used to help teachers better identify who they are talking to on the discord with the use of other commands.</li>
+    <li>!whoami: Outputs the information the bot currently has stored about you, mostly used for testing.</li>
+    <li>!whois: Takes a name as an argument and private messages you what the bot has stored about them. Only useable by faculty & admins.</li>
+    <li>!links: Takes a course acronym as an agrument (COSC111) and outputs a list of useful links for that course taken from a SQLite database.</li>
+    <li>!profquote: Outputs a random quote from a SQLite database, if an argument is provided it gives you a random quote from the provided name.</li>
+    <li>!addquote: Allows users to add quotes to the SQLite database to be seen by !profquote later.</li>
+<li>!rolldice: Returns a random number between 1-6 in the channel that it is called.</li>
+</ul>
+<br>The previously mentioned custom commands are stored in the SQLite database and the only way to add more are with admin permissions on the flask web-portal.
+Each command has a specified message to be sent with the option of being on-join (which happens when a new user joins the discord server) or on-message (which happens when a specific string is called defined when making the command).
+
+
+
+{% endblock %}

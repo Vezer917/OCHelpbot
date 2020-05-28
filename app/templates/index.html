@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+<h2>Welcome to the <b>OC Helpbot</b> Webportal!</h2>
+    <br>To add a custom command, please fill out the form below.
+    <br>
+    <h2>Enter in a custom command:</h2>
+    {% if form %}
+    {{ form.hidden_tag() }}
+    {{ wtf.quick_form(form) }}
+    <br>
+    {% endif %}
+    <h3>Examples of Discord Markdown:</h3>
+    <br>Here we can put examples of Discord Markdown for future commands
+    <br>such as ``` (3 backwards apostrophies) is for code
+    <br>(Work in progress)
+{% endblock %}

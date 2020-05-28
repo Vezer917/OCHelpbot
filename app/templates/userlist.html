@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    <br>
+    <h2>Here is the list of users:</h2>
+    <table class="table table-striped">
+        <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <!--<th scope="col">Admin?</th> -->
+    </tr>
+        </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.username }}</td>
+        <!--<td>{{ user.admin }}</td> -->
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock %}

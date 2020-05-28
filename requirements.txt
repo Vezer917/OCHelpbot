@@ -1,0 +1,15 @@
+python-dotenv
+flask
+flask-bootstrap
+SQLalchemy
+discord
+mail
+email_validator
+jwt
+flask_wtf
+flask_mail
+flask_login
+flask_migrate
+flask_sqlalchemy
+math
+
