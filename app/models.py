@@ -29,10 +29,7 @@ class User(UserMixin, db.Model):
             app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     def get_admin(self):
-        if self.admin == 1:
-            return True
-        else:
-            return False
+        return self.admin == 1
 
     @staticmethod
     def verify_reset_password_token(token):
