@@ -20,12 +20,14 @@ Discord Commands:
 - !help
 - !create-channel
 - !roll_dice
+- !courseinfo
 - Custom commands from Flask database
+- User profiles
 
 UPCOMING FUNCTIONALITY:
 =======================
 - !addlink command
-- !quiz command
+- !quiz command with flask forms
 - add multiple return commands from flask
 
 ## Running
