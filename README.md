@@ -9,6 +9,7 @@ Flask:
 - Register new users
 - Add/Delete Custom Commands in Flask webportal
 - Welcome message from bot upon joining Discord server
+- User profiles
 
 Discord Commands:
 - !register
@@ -22,7 +23,6 @@ Discord Commands:
 - !roll_dice
 - !courseinfo
 - Custom commands from Flask database
-- User profiles
 
 UPCOMING FUNCTIONALITY:
 =======================
