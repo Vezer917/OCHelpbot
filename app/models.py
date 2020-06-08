@@ -57,3 +57,13 @@ class Command(db.Model):
     def __repr__(self):
         return 'Command !{}'.format(self.cmdname)
 
+
+class Quiz(db.Model):
+    __tablename__ = 'quiz'
+    name = db.Column(db.String(64), index=True, unique=True, primary_key=True)
+    madeby = db.Column(db.String(40))
+    questions = db.Column(db.Integer)
+    score = db.Column(db.Integer)
+
+    def __repr__(self):
+        return 'Quiz {}, No of Q\'s: {}\nMade by: {}'.format(self.name, len(self.questions), self.madeby)

@@ -1,5 +1,9 @@
 from discord.ext import commands
+import discord
+import sqlite3
 
+conn = sqlite3.connect(r".\app\botdb.db")
+c = conn.cursor()
 
 # The quiz command should have the following functionality:
 # - Add quiz:    Start with quiz name, followed by questions.
@@ -17,7 +21,6 @@ class Quiz(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # Define a new command
     @commands.command(
         name='quiz',
         description='The quiz command',

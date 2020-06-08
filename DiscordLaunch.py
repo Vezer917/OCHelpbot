@@ -299,6 +299,9 @@ async def on_member_join(member):
     await member.dm_channel.send(output)
 
 
+# This command is terrible and should be rewritten to read help attribute associated with each command
+# Also, should be a cog and presented in embed format
+# String building with a switch command is not a very python way of doing things
 @bot.command(name='help')
 async def help(ctx):
     message = ctx.message.content

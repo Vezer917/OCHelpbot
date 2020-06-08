@@ -5,7 +5,7 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm, CmdForm, DelCmdForm
-from app.models import User, Command
+from app.models import User, Command, Quiz
 from app.email import send_password_reset_email
 
 commands_blueprint = Blueprint('commands', __name__, template_folder='templates')
@@ -22,6 +22,12 @@ def index():
 def index():
     all_users = User.query.all()
     return render_template('userlist.html', users=all_users)
+
+
+@quiz_blueprint.route('/')
+def index():
+    all_quiz = Quiz.query.all()
+    return render_template('quiz.html', quiz=all_quiz)
 
 
 @app.before_request
@@ -149,3 +155,8 @@ def userlist():
 @app.route('/usermanual')
 def usermanual():
     return render_template('usermanual.html', title='User Manual')
+
+
+@app.route('/quiz')
+def quizpage():
+    return render_template('quiz.html', title='Quiz')
