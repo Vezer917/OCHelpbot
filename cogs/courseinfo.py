@@ -1,8 +1,9 @@
 from discord.ext import commands
 import discord
 import sqlite3
+from app import dbcon
 
-conn = sqlite3.connect(r".\app\botdb.db")
+conn = sqlite3.connect(dbcon.dbfile)
 c = conn.cursor()
 
 

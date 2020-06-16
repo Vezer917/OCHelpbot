@@ -59,9 +59,8 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError('Please use a different username.')
 
+
 # This is the Custom Command Form that appears on the main page:
-
-
 class CmdForm(FlaskForm):
     cmdname = StringField('Command Name', validators=[DataRequired()])
     context = SelectField(u'Context', choices=[('onMessage', 'onMessage'), ('onJoin', 'onJoin'), ('onReact', 'onReact')])

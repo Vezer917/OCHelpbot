@@ -10,6 +10,7 @@ from app.email import send_password_reset_email
 
 commands_blueprint = Blueprint('commands', __name__, template_folder='templates')
 users_blueprint = Blueprint('userlist', __name__, template_folder='templates')
+quiz_blueprint = Blueprint('quizlist', __name__, template_folder='templates')
 
 
 @commands_blueprint.route('/')
