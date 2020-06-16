@@ -315,6 +315,22 @@ async def pi(ctx):
         await ctx.channel.send(somepi)
 
 
+# auto emoji reactions
+@bot.listen('on_message')
+async def on_message(message):
+    # add sunglasses emoji if someone says "cool" in a message
+    if "cool" in message.content.lower():
+        await message.add_reaction(u"\U0001F60E")
+    # add robot emoji
+    if "bot" in message.content.lower():
+        await message.add_reaction(u"\U0001F916")
+    # custom emoji trial
+    if "deb" in message.content.lower():
+        debbed = bot.get_emoji(428621135790473217)
+        if debbed is not None:
+            await message.add_reaction(debbed)
+
+
 def main():
     threading.Thread(target=bot.run(token)).start()
 
