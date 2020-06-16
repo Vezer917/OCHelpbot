@@ -6,6 +6,7 @@ from app import dbcon
 conn = sqlite3.connect(dbcon.dbfile)
 c = conn.cursor()
 
+
 # The quiz command should have the following functionality:
 # - Add quiz:    Start with quiz name, followed by questions.
 #                Possibly send user to Flask link to fill out form?
@@ -17,7 +18,6 @@ c = conn.cursor()
 # The quiz command will need two tables: 'quiz' and 'questions'
 #  quiz : #name (text), questions (int), madeby (text), score (int)
 #  questions : #quizname (text, FK), question (text), answer (text), score (int)
-
 
 
 class Quiz(commands.Cog):
@@ -39,17 +39,14 @@ class Quiz(commands.Cog):
             c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
             info = c.fetchone()
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
-            if info is not None and userinput[1] == 'run':
-                await run(self, ctx, str.lower(userinput[1]))
-                return
             if info is not None:
+                if userinput[1] == 'run':
+                    await run(self, ctx, str.lower(info[0]))
+                    return
                 quizname = str.upper(name)
                 desc = ""
-                if len(info[1]) > 0:
-                    desc += "\nNumber of Questions: " + info[1]
-                if len(info[2]) > 0:
-                    desc += "\nMade by: " + info[2]
-
+                desc += "\nNumber of Questions: " + info[1]
+                desc += "\nMade by: " + info[2]
                 embed = discord.Embed(
                     title=quizname,
                     description=desc,
@@ -62,8 +59,18 @@ class Quiz(commands.Cog):
                 await ctx.send("Please enter '!quiz' followed by a quiz name\nType '!quiz list' to see list of quizzes")
                 return
         # send a list of all quizzes
-        if userinput[1] == 'list' :
-            await ctx.send("list of all quizzes")
+        if userinput[1] == 'list':
+            c.execute("SELECT name FROM quiz;")
+            info = c.fetchall()
+            desc = ""
+            for i in info:
+                desc += i[0] + "\n"
+            embed = discord.Embed(
+                title="List of all quizzes",
+                description=desc,
+                color=0x206694
+            )
+            await ctx.send(embed=embed, content=None)
             return
         c.execute("SELECT name FROM quiz WHERE name='" + str.lower(userinput[1]) + "';")
         info = c.fetchone()
@@ -80,11 +87,41 @@ class Quiz(commands.Cog):
 
 # run the actual quiz
 async def run(self, ctx, quiz):
+    # grab quiz
+    c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + quiz + "';")
+    quizinfo = c.fetchone()
+    quizname = str.upper(quizinfo[0])
+    desc = ""
+    desc += "\nNumber of Questions: " + quizinfo[1]
+    desc += "\nMade by: " + quizinfo[2]
+    embed = discord.Embed(
+        title=quizname,
+        description=desc,
+        color=0x206694
+    )
+    await ctx.send(embed=embed, content=None)
+    # grab questions
     c.execute("SELECT question, answer, score FROM questions WHERE quizname='" + quiz + "';")
     questions = c.fetchall()
     totalscore = 0
+    counter = 0
     for q in questions:
-        await ctx.send(q[0])
+        counter += 1
+        await ctx.send("Question " + str(counter) + ":\n" + q[0])
+        try:
+            msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+        except TimeoutError:
+            await ctx.send('timeout')
+
+        if msg.content == '!end':
+            await ctx.send('Quiz stopped')
+            return
+        if str.lower(q[1]) == str.lower(msg.content):
+            await ctx.send('Correct! *' + str(q[2]) + ' points!*')
+            totalscore += q[2]
+        else:
+            await ctx.send('Incorrect. The correct answer was:\n' + str(q[1]))
+    await ctx.send('Quiz finished. *Total score: ' + str(totalscore) + " out of " + str(quizinfo[3]) + "*")
     return
 
 
