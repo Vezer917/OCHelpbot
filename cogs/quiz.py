@@ -1,3 +1,5 @@
+import asyncio
+
 from discord.ext import commands
 import discord
 import sqlite3
@@ -33,16 +35,14 @@ class Quiz(commands.Cog):
     async def quiz(self, ctx):
         userinput = ctx.message.content.split(' ')
         # If there is no course specified
+        channelname = ctx.channel.name.split('_')
+        name = channelname[0]
+        c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
+        info = c.fetchone()
         if len(userinput) < 2:
-            channelname = ctx.channel.name.split('_')
-            name = channelname[0]
-            c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
-            info = c.fetchone()
+
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             if info is not None:
-                if userinput[1] == 'run':
-                    await run(self, ctx, str.lower(info[0]))
-                    return
                 quizname = str.upper(name)
                 desc = ""
                 desc += "\nNumber of Questions: " + info[1]
@@ -52,13 +52,21 @@ class Quiz(commands.Cog):
                     description=desc,
                     color=0x206694
                 )
+                await ctx.send("I found a quiz for this channel: \n(Type '!quiz run' to start the quiz)")
                 await ctx.send(embed=embed, content=None)
                 return
             # no quiz specified and not a course channel
             else:
-                await ctx.send("Please enter '!quiz' followed by a quiz name\nType '!quiz list' to see list of quizzes")
+                await ctx.send("Please enter '!quiz' followed by a quiz name\nType '!quiz list' to see list of quizzes"
+                               " or '!quiz help' to see a list of quiz commands")
                 return
         # send a list of all quizzes
+        if userinput[1] == 'run':
+            if info is None:
+                await ctx.send("No quiz found for this channel\nType '!quiz list' to see a list of all quizzes")
+                return
+            await run(self, ctx, str.lower(name))
+            return
         if userinput[1] == 'list':
             c.execute("SELECT name FROM quiz;")
             info = c.fetchall()
@@ -110,8 +118,8 @@ async def run(self, ctx, quiz):
         await ctx.send("Question " + str(counter) + ":\n" + q[0])
         try:
             msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
-        except TimeoutError:
-            await ctx.send('timeout')
+        except asyncio.TimeoutError:
+            await ctx.send('Quiz has timed out. *This happens automatically after 60 seconds*')
 
         if msg.content == '!end':
             await ctx.send('Quiz stopped')

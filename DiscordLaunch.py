@@ -31,7 +31,7 @@ c = conn.cursor()
 # We implemented our own version of the 'help' command
 bot.remove_command('help')
 # define the cogs
-cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help']
+cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice']
 
 
 @bot.event
@@ -75,16 +75,7 @@ async def add_quote(ctx):
             await ctx.send("Quote added")
 
 
-@bot.command(name='roll_dice', help='Simulates rolling dice.')
-async def roll(ctx, number_of_dice: int, number_of_sides: int):
-    dice = [
-        str(random.choice(range(1, number_of_sides + 1)))
-        for _ in range(number_of_dice)
-    ]
-    await ctx.send(', '.join(dice))
-
-
-@bot.command(name='create-channel')
+@bot.command(name='create-channel', aliases=['cc'])
 @commands.has_role('admin')
 async def create_channel(ctx, channel_name: str):
     guild = ctx.guild

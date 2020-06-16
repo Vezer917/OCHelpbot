@@ -12,7 +12,7 @@ COMMANDS:
 # [ ] Addlink command
          - Could make "!links add" instead of new command.
 # [ ] Music Player
-# [X] Separate commands into 'cogs' (tried to implement this with no luck)
+# [X] Separate commands into 'cogs' (work in progress)
 # [ ] Poll command - conduct polls using message reactions
 # [ ] ImportantDates command (would be cool if it only gave upcoming events)
 # [ ] More robust roll_dice command
@@ -29,6 +29,7 @@ FLASK:
 
 
 Other Features:
-# [ ] Make bot 'autoreact' to certain words (such as prof names)
+# [X] Make bot 'autoreact' to certain words (such as prof names)
 # [ ] Error catching for all SQL queries (currently nothing happens and it fails with no messaging)
 # [ ] Welcome new users with embedded cool looking message
+# [ ] Clean up code to remove all "userinput" strings and replace with proper arguments
