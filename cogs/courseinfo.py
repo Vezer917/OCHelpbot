@@ -53,8 +53,7 @@ class CourseInfo(commands.Cog):
                 return
             # no course specified and not a course channel
             else:
-                await ctx.send("Please enter '!courseinfo' followed by a course code")
-                await ctx.send('Eg: !courseinfo COSC111')
+                await ctx.send("Please enter '!courseinfo' followed by a course code\nEg: !courseinfo COSC111")
             return
         # returns the specific course (even if you are in course channel)
         c.execute("SELECT desc, pre_req, core_req FROM course_info WHERE course_id='" + str.lower(userinput[1]) + "';")

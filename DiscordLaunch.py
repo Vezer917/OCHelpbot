@@ -111,11 +111,13 @@ async def make_admin(ctx):
         await ctx.channel.send('User made admin')
 
 
+# add stats (runtime, returned messages, etc.)
 @bot.command(name='marco', help='Test to see if bot is running')
 async def marco(ctx):
     await ctx.channel.send('polo')
 
 
+# This command should be in its own cog and streamlined to wait for user input
 @bot.command(name='register', help='Allows you to input information about yourself into the bot')
 async def register(ctx):
     # Checks if they already have a database row
