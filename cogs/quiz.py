@@ -14,7 +14,9 @@ c = conn.cursor()
 #                Possibly send user to Flask link to fill out form?
 # - Modify quiz: This should ask the user which question they would like to modify, delete or
 #                rename quiz
-# - Start quiz:  Run either as individual or group. Individual quizzes should be private messaged.
+# - Start quiz:  [ ] Run either as individual or group.
+#                [X] Individual quizzes run in private channels
+#                [ ] Improve switch to prevent quiz overlap
 #
 # The quiz command will need two tables: 'quiz' and 'questions'
 #  quiz : #name (text), questions (int), madeby (text), score (int)
@@ -89,6 +91,56 @@ class Quiz(commands.Cog):
             await run(self, ctx, str.lower(userinput[1]))
             return
         # await ctx.send('Something went wrong if you get this message... 0_0')
+
+    @commands.command(
+        name='addquestion',
+        help='Add a question to a quiz',
+        aliases=['addq']
+    )
+    async def addquestion(self, ctx, arg):
+        # check to see if private channel exists, if not makes one
+        if ctx.author.dm_channel is None:
+            await ctx.author.create_dm()
+        if arg is None:
+            ctx.author.dm_channel.send('Please specify the quiz you are adding a question to\nEg: !addq cosc111')
+            return
+        # get quiz
+        c.execute("SELECT name, questions FROM quiz WHERE name='" + str.lower(arg) + "';")
+        quizname = c.fetchone()
+        if quizname is None:
+            await ctx.author.dm_channel.send("No quiz by that name found. Type '!quiz list' to see a list of quizzes")
+            return
+        await ctx.author.dm_channel.send("Please tell me the question:")
+        question = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+        await ctx.author.dm_channel.send("Great, now the answer:")
+        answer = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+        await ctx.author.dm_channel.send("Please review the question and type 'y' to accept or 'n' to cancel:")
+        desc = ""
+        desc += "\nQuestion: " + question.content
+        desc += "\nAnswer: " + answer.content
+        embed = discord.Embed(
+            title=quizname[0],
+            description=desc,
+            color=0x206694
+        )
+        await ctx.author.dm_channel.send(embed=embed, content=None)
+        confirm = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+        if confirm.content.startswith('n') or confirm.content.startswith('N'):
+            await ctx.author.dm_channel.send("Cancelled")
+            return
+        else:
+            try:
+                newnumberofquestions = int(quizname[1]) + 1
+                c.execute("INSERT INTO questions VALUES('" + quizname[0] + "', '" + question.content + "', '"
+                          + answer.content + "', " + "50);")
+                c.execute("UPDATE quiz SET questions=" + str(newnumberofquestions) +
+                          " WHERE name='" + str(quizname[0]) + "';")
+                conn.commit()
+            except:
+                await ctx.author.dm_channel.send("Hmmm.... something went wrong")
+                return
+            else:
+                await ctx.author.dm_channel.send("Question added")
         return
 
 
@@ -127,11 +179,12 @@ async def run(self, ctx, quiz):
             await ctx.author.dm_channel.send('Quiz stopped')
             return
         if str.lower(q[1]) == str.lower(msg.content):
-            await ctx.author.dm_channel.send('Correct! *' + str(q[2]) + ' points!*')
-            totalscore += q[2]
+            await ctx.author.dm_channel.send('Correct!')
+            totalscore += 1
         else:
             await ctx.author.dm_channel.send('Incorrect. The correct answer was:\n' + str(q[1]))
-    await ctx.author.dm_channel.send('Quiz finished. *Total score: ' + str(totalscore) + " out of " + str(quizinfo[3]) + "*")
+    await ctx.author.dm_channel.send(
+        'Quiz finished. *Total score: ' + str(totalscore) + " out of " + str(quizinfo[1]) + "*")
     return
 
 
