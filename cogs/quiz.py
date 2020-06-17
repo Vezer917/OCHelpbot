@@ -36,8 +36,10 @@ class Quiz(commands.Cog):
     async def quiz(self, ctx):
         userinput = ctx.message.content.split(' ')
         # If there is no course specified
-        channelname = ctx.channel.name.split('_')
-        name = channelname[0]
+        name = " "
+        if str(ctx.channel.type) != 'private':
+            channelname = ctx.channel.name.split('_')
+            name = channelname[0]
         c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
         info = c.fetchone()
         if len(userinput) < 2:
@@ -57,34 +59,22 @@ class Quiz(commands.Cog):
                 await ctx.send(embed=embed, content=None)
                 return
             # no quiz specified and not a course channel
-            else:
-                await ctx.send("Please enter '!quiz' followed by a quiz name\nType '!quiz list' to see list of quizzes"
-                               " or '!quiz help' to see a list of quiz commands")
-                return
-        # send a list of all quizzes
+            await ctx.send("Please enter '!quiz' followed by a quiz name\nType '!quizlist' to see list of quizzes"
+                           " or '!quiz help' to see a list of quiz commands")
+            return
+        # run quiz for current channel
         if userinput[1] == 'run':
             if info is None:
-                await ctx.send("No quiz found for this channel\nType '!quiz list' to see a list of all quizzes")
+                await ctx.send("No quiz found for this channel\nType '!quizlist' to see a list of all quizzes")
                 return
             await run(self, ctx, str.lower(name))
             return
-        if userinput[1] == 'list':
-            c.execute("SELECT name FROM quiz;")
-            info = c.fetchall()
-            desc = ""
-            for i in info:
-                desc += i[0] + "\n"
-            embed = discord.Embed(
-                title="List of all quizzes",
-                description=desc,
-                color=0x206694
-            )
-            await ctx.send(embed=embed, content=None)
-            return
+        # send a list of all quizzes
+
         c.execute("SELECT name FROM quiz WHERE name='" + str.lower(userinput[1]) + "';")
         info = c.fetchone()
         if info is None:
-            await ctx.send("Quiz not found\nType '!quiz list' to see a list of all quizzes")
+            await ctx.send("Quiz not found\nType '!quizlist' to see a list of all quizzes")
             return
         else:
             await ctx.send('Starting quiz... Type !end to stop')
@@ -141,6 +131,21 @@ class Quiz(commands.Cog):
                 return
             else:
                 await ctx.author.dm_channel.send("Question added")
+        return
+
+    @commands.command(name="quizlist")
+    async def quizlist(self, ctx):
+        c.execute("SELECT name FROM quiz;")
+        info = c.fetchall()
+        desc = ""
+        for i in info:
+            desc += i[0] + "\n"
+        embed = discord.Embed(
+            title="List of all quizzes",
+            description=desc,
+            color=0x206694
+        )
+        await ctx.send(embed=embed, content=None)
         return
 
 

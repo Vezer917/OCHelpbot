@@ -323,6 +323,13 @@ async def on_message(message):
             await message.add_reaction(debbed)
 
 
+# return channel type
+@bot.command(name="channeltype", hidden=True)
+async def channeltype(ctx):
+    channel_type = ctx.channel.type
+    await ctx.channel.send(channel_type)
+
+
 def main():
     threading.Thread(target=bot.run(token)).start()
 
