@@ -1,6 +1,4 @@
 import asyncio
-from datetime import time
-
 from discord.ext import commands
 import discord
 import sqlite3

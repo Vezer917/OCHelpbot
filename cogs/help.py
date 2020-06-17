@@ -1,15 +1,13 @@
 from discord.ext import commands
-import discord
-import sqlite3
 from app import dbcon
 
-conn = sqlite3.connect(dbcon.dbfile)
-c = conn.cursor()
+conn = dbcon.conn
+c = dbcon.c
 
 # The help command should have the following functionality:
 # !help - gives list of commands
 # !help x - where 'x' is a specific command gives info about command
-#
+#  - Also needs to consider cogs
 
 
 class Help(commands.Cog):

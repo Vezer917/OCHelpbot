@@ -1,10 +1,9 @@
 from discord.ext import commands
 import discord
-import sqlite3
 from app import dbcon
 
-conn = sqlite3.connect(dbcon.dbfile)
-c = conn.cursor()
+conn = dbcon.conn
+c = dbcon.c
 
 
 # The courseinfo command should have the following functionality:
