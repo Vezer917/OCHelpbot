@@ -40,8 +40,11 @@ async def on_ready():
     print(f'Logged in as {bot.user.name} - {bot.user.id}')
     for cog in cogs:
         bot.load_extension(cog)
-
     return
+
+# Below are the actual commands for the bot that will eventually end up in Cogs.
+# What is a Cog? A Cog is an easy way to divide parts of your program into separate files.
+# This will make it much easier to separate our command groups. (Quiz, Help, etc.)
 
 
 @bot.command(name='profquote', help='Responds with a random profquote')
