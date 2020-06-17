@@ -87,18 +87,18 @@ class Quiz(commands.Cog):
         help='Add a question to a quiz',
         aliases=['addq']
     )
-    async def addquestion(self, ctx, arg):
+    async def addquestion(self, ctx, *args):
         # check to see if private channel exists, if not makes one
         if ctx.author.dm_channel is None:
             await ctx.author.create_dm()
-        if arg is None:
-            ctx.author.dm_channel.send('Please specify the quiz you are adding a question to\nEg: !addq cosc111')
+        if not args:
+            ctx.send('Please specify the quiz you are adding a question to\nEg: !addq cosc111')
             return
         # get quiz
-        c.execute("SELECT name, questions FROM quiz WHERE name='" + str.lower(arg) + "';")
+        c.execute("SELECT name, questions FROM quiz WHERE name='" + str.lower(args[1]) + "';")
         quizname = c.fetchone()
         if quizname is None:
-            await ctx.author.dm_channel.send("No quiz by that name found. Type '!quiz list' to see a list of quizzes")
+            await ctx.author.dm_channel.send("No quiz by that name found. Type '!quizlist' to see a list of quizzes")
             return
         await ctx.author.dm_channel.send("Please tell me the question:")
         question = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
@@ -147,6 +147,61 @@ class Quiz(commands.Cog):
         )
         await ctx.send(embed=embed, content=None)
         return
+
+    @commands.command(
+        name="makequiz",
+        help="Create a quiz",
+        aliases=['mq', 'makeq', 'createquiz', 'addquiz']
+    )
+    async def makequiz(self, ctx, *, arg):
+        # check to see if private channel exists, if not makes one
+        if ctx.author.dm_channel is None:
+            await ctx.author.create_dm()
+        if len(arg) < 2:
+            await ctx.send("Please enter a name of the quiz\nEg: !makequiz Ken Trivia")
+            return
+        quizname = str(arg)
+        c.execute("SELECT name FROM quiz WHERE name='" + quizname + "';")
+        q = c.fetchone()
+        if q is not None:
+            await ctx.send("A quiz by that name already exists")
+            return
+        await ctx.author.dm_channel.send("The name of the quiz will be: " + quizname +
+                                         "\nPlease tell me the first question:")
+        question = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+        await ctx.author.dm_channel.send("Great, now the answer:")
+        answer = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+        await ctx.author.dm_channel.send("Please review the quiz and first question then "
+                                         "type 'y' to accept or 'n' to cancel:")
+        desc = ""
+        desc += "\nQuestion: " + question.content
+        desc += "\nAnswer: " + answer.content
+        embed = discord.Embed(
+            title=quizname,
+            description=desc,
+            color=0x206694
+        )
+        await ctx.author.dm_channel.send(embed=embed, content=None)
+        confirm = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+        if confirm.content.startswith('n') or confirm.content.startswith('N'):
+            await ctx.author.dm_channel.send("Cancelled")
+            return
+        else:
+            try:
+                c.execute("INSERT INTO questions VALUES('" + quizname + "', '" + question.content + "', '"
+                          + answer.content + "', 50);")
+                conn.commit()
+                c.execute("INSERT INTO quiz VALUES('" + quizname + "', 1, '" + str(ctx.author) + "', 100);")
+                conn.commit()
+            except:
+                await ctx.author.dm_channel.send("Hmmm.... something went wrong")
+                return
+            else:
+                await ctx.author.dm_channel.send("Quiz created")
+        return
+
+
+
 
 
 # run the actual quiz (private messaged to user)
