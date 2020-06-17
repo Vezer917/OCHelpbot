@@ -6,6 +6,7 @@ import sqlite3
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from app import dbcon
 import cogs
 import threading
 
@@ -26,8 +27,8 @@ dbfile = os.getenv('DATABASE_FILE')
 bot = commands.Bot(command_prefix='!')
 
 # setting up sqlite
-conn = sqlite3.connect(dbfile)
-c = conn.cursor()
+conn = dbcon.conn
+c = dbcon.c
 # We implemented our own version of the 'help' command
 bot.remove_command('help')
 # define the cogs
@@ -328,6 +329,14 @@ async def on_message(message):
 async def channeltype(ctx):
     channel_type = ctx.channel.type
     await ctx.channel.send(channel_type)
+
+
+# return arg information
+@bot.command(name="arginfo", hidden=True)
+async def arginfo(ctx, *, args=None):
+    if ctx.message.content == "!arginfo":
+        await ctx.channel.send("no args")
+    await ctx.channel.send("args: " + args + "\narg length: " + str(len(args)))
 
 
 def main():

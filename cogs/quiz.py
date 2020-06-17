@@ -1,12 +1,13 @@
 import asyncio
+from datetime import time
 
 from discord.ext import commands
 import discord
 import sqlite3
 from app import dbcon
 
-conn = sqlite3.connect(dbcon.dbfile)
-c = conn.cursor()
+conn = dbcon.conn
+c = dbcon.c
 
 
 # The quiz command should have the following functionality:
@@ -33,20 +34,19 @@ class Quiz(commands.Cog):
         description='The quiz command',
         aliases=['q']
     )
-    async def quiz(self, ctx):
-        userinput = ctx.message.content.split(' ')
+    async def quiz(self, ctx, *, args=None):
         # If there is no course specified
-        name = " "
+        name = None
+        info = None
         if str(ctx.channel.type) != 'private':
             channelname = ctx.channel.name.split('_')
             name = channelname[0]
-        c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
-        info = c.fetchone()
-        if len(userinput) < 2:
-
+            c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
+            info = c.fetchone()
+        if args is None:
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             if info is not None:
-                quizname = str.upper(name)
+                quizname = name
                 desc = ""
                 desc += "\nNumber of Questions: " + info[1]
                 desc += "\nMade by: " + info[2]
@@ -63,22 +63,21 @@ class Quiz(commands.Cog):
                            " or '!quiz help' to see a list of quiz commands")
             return
         # run quiz for current channel
-        if userinput[1] == 'run':
+        if args == 'run':
             if info is None:
                 await ctx.send("No quiz found for this channel\nType '!quizlist' to see a list of all quizzes")
                 return
-            await run(self, ctx, str.lower(name))
+            await run(self, ctx, name)
             return
-        # send a list of all quizzes
 
-        c.execute("SELECT name FROM quiz WHERE name='" + str.lower(userinput[1]) + "';")
+        c.execute("SELECT name FROM quiz WHERE name='" + args + "';")
         info = c.fetchone()
         if info is None:
             await ctx.send("Quiz not found\nType '!quizlist' to see a list of all quizzes")
             return
         else:
             await ctx.send('Starting quiz... Type !end to stop')
-            await run(self, ctx, str.lower(userinput[1]))
+            await run(self, ctx, args)
             return
         # await ctx.send('Something went wrong if you get this message... 0_0')
 
@@ -87,15 +86,15 @@ class Quiz(commands.Cog):
         help='Add a question to a quiz',
         aliases=['addq']
     )
-    async def addquestion(self, ctx, *args):
+    async def addquestion(self, ctx, *, args=None):
         # check to see if private channel exists, if not makes one
         if ctx.author.dm_channel is None:
             await ctx.author.create_dm()
-        if not args:
-            ctx.send('Please specify the quiz you are adding a question to\nEg: !addq cosc111')
+        if args is None:
+            await ctx.send('Please specify the quiz you are adding a question to\nEg: !addq cosc111')
             return
         # get quiz
-        c.execute("SELECT name, questions FROM quiz WHERE name='" + str.lower(args[1]) + "';")
+        c.execute("SELECT name, questions FROM quiz WHERE name='" + str(args) + "';")
         quizname = c.fetchone()
         if quizname is None:
             await ctx.author.dm_channel.send("No quiz by that name found. Type '!quizlist' to see a list of quizzes")
@@ -121,15 +120,18 @@ class Quiz(commands.Cog):
         else:
             try:
                 newnumberofquestions = int(quizname[1]) + 1
-                c.execute("INSERT INTO questions VALUES('" + quizname[0] + "', '" + question.content + "', '"
-                          + answer.content + "', " + "50);")
-                c.execute("UPDATE quiz SET questions=" + str(newnumberofquestions) +
-                          " WHERE name='" + str(quizname[0]) + "';")
+                sql = "INSERT INTO questions (quizname, question, answer, score) VALUES (?, ?, ?, ?)"
+                c.execute(sql, (quizname[0], question.content, answer.content, 50))
                 conn.commit()
+                sql = "UPDATE quiz SET questions=? WHERE name=?"
+                c.execute(sql, (newnumberofquestions, quizname[0]))
+            except sqlite3.Error as e:
+                print(type(e).__name__)
             except:
                 await ctx.author.dm_channel.send("Hmmm.... something went wrong")
                 return
             else:
+                conn.commit()
                 await ctx.author.dm_channel.send("Question added")
         return
 
@@ -151,13 +153,13 @@ class Quiz(commands.Cog):
     @commands.command(
         name="makequiz",
         help="Create a quiz",
-        aliases=['mq', 'makeq', 'createquiz', 'addquiz']
+        aliases=['mq', 'makeq', 'createquiz', 'addquiz', 'quizmake', 'quizadd']
     )
-    async def makequiz(self, ctx, *, arg):
+    async def makequiz(self, ctx, *, arg=None):
         # check to see if private channel exists, if not makes one
         if ctx.author.dm_channel is None:
             await ctx.author.create_dm()
-        if len(arg) < 2:
+        if arg is None:
             await ctx.send("Please enter a name of the quiz\nEg: !makequiz Ken Trivia")
             return
         quizname = str(arg)
@@ -166,53 +168,30 @@ class Quiz(commands.Cog):
         if q is not None:
             await ctx.send("A quiz by that name already exists")
             return
-        await ctx.author.dm_channel.send("The name of the quiz will be: " + quizname +
-                                         "\nPlease tell me the first question:")
-        question = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
-        await ctx.author.dm_channel.send("Great, now the answer:")
-        answer = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
-        await ctx.author.dm_channel.send("Please review the quiz and first question then "
-                                         "type 'y' to accept or 'n' to cancel:")
-        desc = ""
-        desc += "\nQuestion: " + question.content
-        desc += "\nAnswer: " + answer.content
-        embed = discord.Embed(
-            title=quizname,
-            description=desc,
-            color=0x206694
-        )
-        await ctx.author.dm_channel.send(embed=embed, content=None)
-        confirm = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
-        if confirm.content.startswith('n') or confirm.content.startswith('N'):
-            await ctx.author.dm_channel.send("Cancelled")
+        try:
+            sql = "INSERT INTO quiz (name, questions, madeby, score) VALUES (?, ?, ?, ?)"
+            c.execute(sql, (quizname, 0, str(ctx.author), 100))
+            conn.commit()
+        except sqlite3.Error as e:
+            print(type(e).__name__)
+        except:
+            await ctx.author.dm_channel.send("Something went wrong adding the quiz\nQuizname: " + quizname +
+                                             "\nauthor: " + str(ctx.author))
             return
         else:
-            try:
-                c.execute("INSERT INTO questions VALUES('" + quizname + "', '" + question.content + "', '"
-                          + answer.content + "', 50);")
-                conn.commit()
-                c.execute("INSERT INTO quiz VALUES('" + quizname + "', 1, '" + str(ctx.author) + "', 100);")
-                conn.commit()
-            except:
-                await ctx.author.dm_channel.send("Hmmm.... something went wrong")
-                return
-            else:
-                await ctx.author.dm_channel.send("Quiz created")
+            await ctx.author.dm_channel.send("Quiz created. Type '!addq " + quizname + "' to add questions to this quiz")
         return
 
 
-
-
-
 # run the actual quiz (private messaged to user)
-async def run(self, ctx, quiz):
+async def run(self, ctx, args):
     # check to see if private channel exists, if not makes one
     if ctx.author.dm_channel is None:
         await ctx.author.create_dm()
     # grab quiz
-    c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + quiz + "';")
+    c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + args + "';")
     quizinfo = c.fetchone()
-    quizname = str.upper(quizinfo[0])
+    quizname = str(quizinfo[0])
     desc = ""
     desc += "\nNumber of Questions: " + quizinfo[1]
     desc += "\nMade by: " + quizinfo[2]
@@ -223,7 +202,7 @@ async def run(self, ctx, quiz):
     )
     await ctx.send(embed=embed, content=None)
     # grab questions
-    c.execute("SELECT question, answer, score FROM questions WHERE quizname='" + quiz + "';")
+    c.execute("SELECT question, answer, score FROM questions WHERE quizname='" + args + "';")
     questions = c.fetchall()
     totalscore = 0
     counter = 0
@@ -242,7 +221,7 @@ async def run(self, ctx, quiz):
             await ctx.author.dm_channel.send('Correct!')
             totalscore += 1
         else:
-            await ctx.author.dm_channel.send('Incorrect. The correct answer was:\n' + str(q[1]))
+            await ctx.author.dm_channel.send('Incorrect. The correct answer was:\n**' + str(q[1]) + "**")
     await ctx.author.dm_channel.send(
         'Quiz finished. *Total score: ' + str(totalscore) + " out of " + str(quizinfo[1]) + "*")
     return

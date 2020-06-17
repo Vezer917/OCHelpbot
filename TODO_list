@@ -33,3 +33,4 @@ Other Features:
 # [ ] Error catching for all SQL queries (currently nothing happens and it fails with no messaging)
 # [ ] Welcome new users with embedded cool looking message
 # [ ] Clean up code to remove all "userinput" strings and replace with proper arguments
+# [ ] All SQL calls must be rewritten to prevent injection (Currently most of them use string building which is bad)
