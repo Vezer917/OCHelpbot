@@ -15,7 +15,6 @@ c = conn.cursor()
 # - Modify quiz: This should ask the user which question they would like to modify, delete or
 #                rename quiz
 # - Start quiz:  Run either as individual or group. Individual quizzes should be private messaged.
-#                Possibly add time limit?
 #
 # The quiz command will need two tables: 'quiz' and 'questions'
 #  quiz : #name (text), questions (int), madeby (text), score (int)
@@ -93,8 +92,11 @@ class Quiz(commands.Cog):
         return
 
 
-# run the actual quiz
+# run the actual quiz (private messaged to user)
 async def run(self, ctx, quiz):
+    # check to see if private channel exists, if not makes one
+    if ctx.author.dm_channel is None:
+        await ctx.author.create_dm()
     # grab quiz
     c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + quiz + "';")
     quizinfo = c.fetchone()
@@ -115,21 +117,21 @@ async def run(self, ctx, quiz):
     counter = 0
     for q in questions:
         counter += 1
-        await ctx.send("Question " + str(counter) + ":\n" + q[0])
+        await ctx.author.dm_channel.send("Question " + str(counter) + ":\n" + q[0])
         try:
             msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
         except asyncio.TimeoutError:
-            await ctx.send('Quiz has timed out. *This happens automatically after 60 seconds*')
-
-        if msg.content == '!end':
-            await ctx.send('Quiz stopped')
+            await ctx.author.dm_channel.send('Quiz has timed out. *This happens automatically after 60 seconds*')
+        # prevents quiz from running multiple times
+        if msg.content.startswith('!end') or msg.content.startswith('!quiz'):
+            await ctx.author.dm_channel.send('Quiz stopped')
             return
         if str.lower(q[1]) == str.lower(msg.content):
-            await ctx.send('Correct! *' + str(q[2]) + ' points!*')
+            await ctx.author.dm_channel.send('Correct! *' + str(q[2]) + ' points!*')
             totalscore += q[2]
         else:
-            await ctx.send('Incorrect. The correct answer was:\n' + str(q[1]))
-    await ctx.send('Quiz finished. *Total score: ' + str(totalscore) + " out of " + str(quizinfo[3]) + "*")
+            await ctx.author.dm_channel.send('Incorrect. The correct answer was:\n' + str(q[1]))
+    await ctx.author.dm_channel.send('Quiz finished. *Total score: ' + str(totalscore) + " out of " + str(quizinfo[3]) + "*")
     return
 
 
