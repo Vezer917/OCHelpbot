@@ -9,8 +9,10 @@ c = dbcon.c
 # The help command should have the following functionality:
 # !help - gives list of commands
 # !help x - where 'x' is a specific command gives info about command
-#  - Also needs to consider cogs and custom commands
-#  - If command 'hidden=True' then it shouldn't show up in help list
+# [X] Also needs to consider cogs and custom commands
+# [X] If command 'hidden=True' then it shouldn't show up in help list
+# [ ] Needs to alphabetize the commands
+# [ ] Group by cog (use command groups?)
 
 
 class Help(commands.Cog):
@@ -20,7 +22,7 @@ class Help(commands.Cog):
 
     @commands.command(
         name='help',
-        description='The help command',
+        help='Returns the help text for commands',
         aliases=['h']
     )
     async def help(self, ctx):
@@ -55,8 +57,9 @@ class Help(commands.Cog):
             return
         else:
             arg = message[1]
+            argtitle = "!" + arg
             embed = discord.Embed(
-                title="Help",
+                title=argtitle,
                 color=0x206694
             )
             cmdhelp = ""
@@ -71,9 +74,16 @@ class Help(commands.Cog):
             # find the hardcoded cmd
             else:
                 cmd = self.bot.get_command(arg)
+                if cmd is None:
+                    await ctx.send("Command not found. Use '!help' to see a list of all commands.")
+                    return
                 cmdhelp = cmd.help
+                cmdname = "!" + cmd.name
+                cmdaliases = cmd.aliases
+                if len(cmdaliases) > 0:
+                    cmdhelp += '\nAliases: ' + str(cmdaliases)
 
-            embed.add_field(name='!'+arg, value=cmdhelp, inline=False)
+            embed.add_field(name=cmdname, value=cmdhelp, inline=False)
             await ctx.send(embed=embed, content=None)
             return
 

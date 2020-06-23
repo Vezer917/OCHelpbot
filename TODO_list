@@ -5,7 +5,7 @@ COMMANDS:
          - This has been implemented in the "profquotes" command
          - Possible ways to do this are to have a special character seperating multiple returns and have the bot
            automatically identify it... such as a "@" or "^"
-# [ ] Quiz command
+# [X] Quiz command
          - Ideally, this command would be robust enough to create quizzes, modify quizzes, start quizzes, and show quiz
            stats.
          - Answering quizzes could be in the form of reactions for multiple choice, or using a String comparator
@@ -26,11 +26,12 @@ COMMANDS:
 
 FLASK:
 # [ ] Have flask display Discord stats (such as top contributer, most upvoted etc.)
+# [ ] Make a quiz form and have each quiz have its own url (eg '/quiz/<quizobject>'
 
 
 Other Features:
 # [X] Make bot 'autoreact' to certain words (such as prof names)
 # [ ] Error catching for all SQL queries (currently nothing happens and it fails with no messaging)
 # [ ] Welcome new users with embedded cool looking message
-# [ ] Clean up code to remove all "userinput" strings and replace with proper arguments
+# [ ] Clean up code to remove all "userinput" strings and replace with proper arguments (eg '*, args')
 # [ ] All SQL calls must be rewritten to prevent injection (Currently most of them use string building which is bad)
