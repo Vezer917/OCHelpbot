@@ -32,7 +32,7 @@ c = dbcon.c
 # We implemented our own version of the 'help' command
 bot.remove_command('help')
 # define the cogs
-cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice']
+cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand']
 
 
 @bot.event
