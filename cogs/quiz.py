@@ -29,7 +29,7 @@ class Quiz(commands.Cog):
 
     @commands.command(
         name='quiz',
-        description='The quiz command',
+        help='The quiz command',
         aliases=['q']
     )
     async def quiz(self, ctx, *, args=None):

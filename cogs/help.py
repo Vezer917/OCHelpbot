@@ -1,13 +1,16 @@
 from discord.ext import commands
 from app import dbcon
+import discord
 
 conn = dbcon.conn
 c = dbcon.c
 
+
 # The help command should have the following functionality:
 # !help - gives list of commands
 # !help x - where 'x' is a specific command gives info about command
-#  - Also needs to consider cogs
+#  - Also needs to consider cogs and custom commands
+#  - If command 'hidden=True' then it shouldn't show up in help list
 
 
 class Help(commands.Cog):
@@ -20,61 +23,58 @@ class Help(commands.Cog):
         description='The help command',
         aliases=['h']
     )
-    # This command is terrible and should be rewritten to read help attribute associated with each command
-    # Also, should be a cog and presented in embed format
-    # String building with a switch command is not a very python way of doing things
     async def help(self, ctx):
         message = ctx.message.content
         message = message.split(' ')
         if len(message) <= 1:
-            # If no arguments are provided it will put out a list of all commands
-            output = "List of all commands for this bot:\n"
 
-            # Hard coded commands
-            output += "!register\n!whoami\n!links\n!roll_dice\n!profquote\n!addquote\n"
+            # If no arguments are provided it will put out a list of all commands
+            desc = "List of all commands for this bot:\n"
+            embed = discord.Embed(
+                title="Help",
+                description=desc,
+                color=0x206694
+            )
+            hardcoded = ""
+            for command in self.bot.commands:
+                if not command.hidden:
+                    hardcoded += f"!{command}\n"
+            embed.add_field(name="Hardcoded Commands:", value=hardcoded, inline=False)
 
             # Custom commands
             c.execute('SELECT name FROM customcommands')
             rows = c.fetchall()
-
+            customcmds = ""
             for row in rows:
-                output += '!' + row[0] + '\n'
+                customcmds += "!" + row[0] + '\n'
+            embed.add_field(name="Custom Commands:", value=customcmds, inline=False)
 
             # Outputs to channel
-            await ctx.channel.send(output)
+
+            await ctx.send(embed=embed, content=None)
+            return
         else:
-            # An argument is provided so it will output the help for the argument
             arg = message[1]
-            output = 'Help for ' + arg + ':\n'
+            embed = discord.Embed(
+                title="Help",
+                color=0x206694
+            )
+            cmdhelp = ""
+            # Checks for custom commands
+            c.execute("SELECT * FROM customcommands WHERE name='" + arg + "';")
+            row = c.fetchone()
 
-            # Hard coded commands
-            if arg == 'register':
-                output += 'Lets you record your first name, program and year into the bot, use !register for syntax'
-            elif arg == 'whoami':
-                output += 'Returns the information the you have given the bot with !register'
-            elif arg == 'links':
-                output += 'Returns a list of useful links with a provided course id, use !links for syntax'
-            elif arg == 'roll_dice':
-                output += 'Returns a random number between 1-6'
-            elif arg == 'profquote':
-                output += 'Returns a random profquote'
-            elif arg == 'addquote':
-                output += 'Add a profquote'
-            elif arg == 'pi':
-                output += 'Returns pi to the n decimal points'
+            if row is not None:
+                # Sets the output to the help message of that command
+                cmdhelp += row[3]
+
+            # find the hardcoded cmd
             else:
-                # Checks for custom commands
-                c.execute("SELECT * FROM customcommands WHERE name='" + arg + "';")
-                row = c.fetchone()
+                cmd = self.bot.get_command(arg)
+                cmdhelp = cmd.help
 
-                if row is not None:
-                    # Sets the output to the help message of that command
-                    output += row[3]
-                else:
-                    # No commands were found, returns error message
-                    output = 'Sorry, no commands were found matching: ' + arg
-
-            await ctx.channel.send(output)
+            embed.add_field(name='!'+arg, value=cmdhelp, inline=False)
+            await ctx.send(embed=embed, content=None)
             return
 
 
