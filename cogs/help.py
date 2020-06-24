@@ -44,11 +44,14 @@ class Help(commands.Cog):
             embed.add_field(name="Hardcoded Commands:", value=hardcoded, inline=False)
 
             # Custom commands
-            c.execute('SELECT name FROM customcommands')
+            c.execute('SELECT name, context FROM customcommands')
             rows = c.fetchall()
             customcmds = ""
             for row in rows:
-                customcmds += "!" + row[0] + '\n'
+                if row[1] == 'onMessage':
+                    customcmds += "!" + row[0] + '\n'
+                if row[1] == 'onJoin':
+                    customcmds += row[0] + " *(onJoin)*\n"
             embed.add_field(name="Custom Commands:", value=customcmds, inline=False)
 
             # Outputs to channel
@@ -63,6 +66,7 @@ class Help(commands.Cog):
                 color=0x206694
             )
             cmdhelp = ""
+            cmdname = arg
             # Checks for custom commands
             c.execute("SELECT * FROM customcommands WHERE name='" + arg + "';")
             row = c.fetchone()

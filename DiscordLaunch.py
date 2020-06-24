@@ -79,7 +79,7 @@ async def add_quote(ctx):
             await ctx.send("Quote added")
 
 
-@bot.command(name='create-channel', aliases=['cc'])
+@bot.command(name='createchannel', aliases=['newchannel', 'makechannel', 'addchannel'])
 @commands.has_role('admin')
 async def create_channel(ctx, channel_name: str):
     guild = ctx.guild
