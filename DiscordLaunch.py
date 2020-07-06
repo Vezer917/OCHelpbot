@@ -325,6 +325,10 @@ async def on_message(message):
         debbed = bot.get_emoji(428621135790473217)
         if debbed is not None:
             await message.add_reaction(debbed)
+    # custom autoreaction command here:
+    # ie !cc a -> name=ken -> context=autoreact -> return=:kenemoji:
+    # problem here is you don't want to query the bot everytime there's a message just to look for autoreacts
+    # solution could be job scheduling a list of keywords to react to
 
 
 # return channel type
