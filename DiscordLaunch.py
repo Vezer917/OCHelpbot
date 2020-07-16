@@ -320,7 +320,7 @@ async def on_message(message):
     if "bot" in message.content.lower():
         await message.add_reaction(u"\U0001F916")
     # custom emoji trial
-    # put a backwards slash '\' infront of an emoji and send to get the emoji's ID
+    # put a backwards slash '\' infront of an emoji and send in discord to get the emoji's ID
     if "deb" in message.content.lower():
         debbed = bot.get_emoji(428621135790473217)
         if debbed is not None:

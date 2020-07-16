@@ -21,7 +21,7 @@ class CustomCommand(commands.Cog):
 
     @commands.command(
         name='customcommand',
-        help='custom command',
+        help="Add, Remove, Modify or Delete custom commands. Type '!customcommand' to see a list of options",
         aliases=['cc', 'custom']
     )
     async def courseinfo(self, ctx, *, args=None):
@@ -43,7 +43,9 @@ class CustomCommand(commands.Cog):
                            "(other types coming in future)")
             cmdcontext = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
                                                  timeout=60.0)
-            # check to see what the context will be
+            # check to see what the context will be (default is set as 'onMessage')
+            # this should really be a unnamed function
+            context = "onMessage"
             if cmdcontext.content.startswith("1") or cmdcontext.content.startswith(
                     "onM") or cmdcontext.content.startswith("onm"):
                 context = "onMessage"

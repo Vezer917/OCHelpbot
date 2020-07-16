@@ -12,22 +12,26 @@ Flask:
 - User profiles
 
 Discord Commands:
-- !register
-- !whoami
-- !whois
+- !create-channel
 - !profquote
 - !addquote
 - !links
 - !help
-- !create-channel
+- !quiz 
+    - !makequiz
+    - !quizlist
+    - !addquestion 
 - !roll_dice
 - !courseinfo
+- !register
+- !whoami
+- !whois
 - Custom commands from Flask database
 
 UPCOMING FUNCTIONALITY:
 =======================
 - !addlink command
-- !quiz command with flask forms
+- add quizzes with flask forms
 - add multiple return commands from flask
 
 ## Running

@@ -49,7 +49,7 @@ class Help(commands.Cog):
             customcmds = ""
             for row in rows:
                 if row[1] == 'onMessage':
-                    customcmds += "!" + row[0] + '\n'
+                    customcmds += f'!{row[0]}\n'
                 if row[1] == 'onJoin':
                     customcmds += row[0] + " *(onJoin)*\n"
             embed.add_field(name="Custom Commands:", value=customcmds, inline=False)
@@ -82,7 +82,7 @@ class Help(commands.Cog):
                     await ctx.send("Command not found. Use '!help' to see a list of all commands.")
                     return
                 cmdhelp = cmd.help
-                cmdname = "!" + cmd.name
+                cmdname = f"!{cmd.name}"
                 cmdaliases = cmd.aliases
                 if len(cmdaliases) > 0:
                     cmdhelp += '\nAliases: ' + str(cmdaliases)
