@@ -1,5 +1,4 @@
 # DiscordLaunch.py
-import math
 import os
 import random
 import sqlite3
@@ -295,19 +294,6 @@ async def on_member_join(member):
         await member.create_dm()
 
     await member.dm_channel.send(output)
-
-
-@bot.command(name='pi', help='Return Pi to the n decimal points')
-async def pi(ctx):
-    """
-    prints PI to the specified int
-    """
-    message = ctx.message.content.split(' ')
-    if len(message) < 2:
-        await ctx.channel.send('3.14\nAdd a number after !pi to specify how many decimal points')
-    else:
-        somepi = str(round(math.pi, message[1]))
-        await ctx.channel.send(somepi)
 
 
 # auto emoji reactions
