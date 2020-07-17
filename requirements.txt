@@ -12,4 +12,4 @@ flask_mail
 flask_login
 flask_migrate
 flask_sqlalchemy
-
+gunicorn
