@@ -5,7 +5,6 @@ import sqlite3
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from app import dbcon
 import cogs
 import threading
 
@@ -26,8 +25,8 @@ dbfile = os.getenv('DATABASE_FILE')
 bot = commands.Bot(command_prefix='!')
 
 # setting up sqlite
-conn = dbcon.conn
-c = dbcon.c
+conn = sqlite3.connect(dbfile)
+c = conn.cursor()
 # We implemented our own version of the 'help' command
 bot.remove_command('help')
 # define the cogs
