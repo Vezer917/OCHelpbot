@@ -1,8 +1,9 @@
+discord
 python-dotenv
 flask
 flask-bootstrap
 SQLalchemy
-discord
+discord.py
 mail
 email_validator
 jwt
