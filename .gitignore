@@ -5,7 +5,6 @@
 
 .flaskenv
 .env
-config.py
 logs/
 migrations/
 app/botdb
