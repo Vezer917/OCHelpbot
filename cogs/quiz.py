@@ -2,7 +2,7 @@ import asyncio
 from discord.ext import commands
 import discord
 import sqlite3
-from app import dbcon
+import dbcon
 
 conn = dbcon.conn
 c = dbcon.c

@@ -1,5 +1,5 @@
 from discord.ext import commands
-from app import dbcon
+import dbcon
 import discord
 
 conn = dbcon.conn

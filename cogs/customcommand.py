@@ -2,7 +2,7 @@ import sqlite3
 
 from discord.ext import commands
 import discord
-from app import dbcon
+import dbcon
 
 conn = dbcon.conn
 c = dbcon.c
