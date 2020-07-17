@@ -1,2 +1,2 @@
 worker: python DiscordLaunch.py
-web: gunicorn RunWebPortal:app
+web: gunicorn RunWebPortal:go()
