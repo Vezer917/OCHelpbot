@@ -13,4 +13,3 @@ flask_login
 flask_migrate
 flask_sqlalchemy
 gunicorn
-Flask-Script
