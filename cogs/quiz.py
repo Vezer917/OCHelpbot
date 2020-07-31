@@ -57,8 +57,11 @@ class Quiz(commands.Cog):
                 await ctx.send(embed=embed, content=None)
                 return
             # no quiz specified and not a course channel
-            await ctx.send("Please enter '!quiz' followed by a quiz name\nType '!quizlist' to see list of quizzes"
-                           " or '!quiz help' to see a list of quiz commands")
+            await ctx.send("'!quiz [NAME]' to run a quiz\n"
+                           "'!quizlist' to see list of quizzes\n"
+                           "'!addquiz [NAME]' to add a quiz\n"
+                           "'!delquiz [NAME]' to delete a quiz\n"
+                           "'!addq [QUIZNAME]' to add a question to a quiz")
             return
         # run quiz for current channel
         if args == 'run':
@@ -180,6 +183,45 @@ class Quiz(commands.Cog):
             await ctx.author.dm_channel.send("Quiz created. Type '!addq " + quizname + "' to add questions to this quiz")
         return
 
+    @commands.command(
+        name="delquiz",
+        help="Delete a quiz",
+        aliases=['dq', 'delq', 'deletequiz', 'dquiz', 'quizdel', 'quizd'],
+        hidden=True
+    )
+    async def delquiz(self, ctx, *, arg=None):
+        if arg is None:
+            await ctx.send("Please enter a name of the quiz to delete.\nEg: !delquiz Ken Trivia")
+            return
+        quizname = str(arg)
+        c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + quizname + "';")
+        q = c.fetchone()
+        desc = f"Quiz Name: {q[0]}\nNo of Questions: {q[1]}\nMade by: {q[2]}"
+        embed = discord.Embed(
+            title=q[0],
+            description=desc,
+            color=0x206694
+        )
+        await ctx.send("Please review the quiz and type 'y' to delete or 'n' to cancel:")
+        await ctx.send(embed=embed, content=None)
+        confirm = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
+                                          timeout=60.0)
+        if confirm.content.startswith('n') or confirm.content.startswith('N'):
+            await ctx.send("Cancelled")
+            return
+        try:
+            c.execute("DELETE FROM quiz WHERE name='" + quizname + "';")
+            conn.commit()
+        except sqlite3.Error as e:
+            print(type(e).__name__)
+        except:
+            await ctx.send("Hmmm.... something went wrong")
+            return
+        c.execute("DELETE FROM questions WHERE quizname='" + quizname + "';")
+        await ctx.send(f"{quizname} deleted")
+        print(f"{quizname} deleted by {ctx.author}")
+        return
+
 
 # run the actual quiz (private messaged to user)
 async def run(self, ctx, args):
@@ -220,8 +262,19 @@ async def run(self, ctx, args):
             totalscore += 1
         else:
             await ctx.author.dm_channel.send('Incorrect. The correct answer was:\n**' + str(q[1]) + "**")
+    scoremessage = ''
+    outof = float(quizinfo[1])
+    if totalscore / outof >= 1:
+        scoremessage = '*Perfect score! Nice!*'
+    else:
+        if totalscore / outof >= .5:
+            scoremessage = '*Good job, you passed!*'
+        if totalscore / outof < .5:
+            scoremessage = '*Better luck next time!*'
+
     await ctx.author.dm_channel.send(
-        'Quiz finished. *Total score: ' + str(totalscore) + " out of " + str(quizinfo[1]) + "*")
+        f'Quiz finished. *Total score: {str(totalscore)} out of {str(quizinfo[1])}*\n{scoremessage}')
+
     return
 
 

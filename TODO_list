@@ -35,3 +35,4 @@ Other Features:
 # [ ] Welcome new users with embedded cool looking message
 # [ ] Clean up code to remove all "userinput" strings and replace with proper arguments (eg '*, args')
 # [ ] All SQL calls must be rewritten to prevent injection (Currently most of them use string building which is bad)
+# [ ] Switch to PostgreSQL from SQLite database
