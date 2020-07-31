@@ -186,8 +186,7 @@ class Quiz(commands.Cog):
     @commands.command(
         name="delquiz",
         help="Delete a quiz",
-        aliases=['dq', 'delq', 'deletequiz', 'dquiz', 'quizdel', 'quizd'],
-        hidden=True
+        aliases=['dq', 'delq', 'deletequiz', 'dquiz', 'quizdel', 'quizd']
     )
     async def delquiz(self, ctx, *, arg=None):
         if arg is None:
@@ -196,7 +195,8 @@ class Quiz(commands.Cog):
         quizname = str(arg)
         c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + quizname + "';")
         q = c.fetchone()
-        desc = f"Quiz Name: {q[0]}\nNo of Questions: {q[1]}\nMade by: {q[2]}"
+        quizauthor = str(q[2]).split("#")
+        desc = f"Quiz Name: {q[0]}\nNo of Questions: {q[1]}\nMade by: {quizauthor[0]}"
         embed = discord.Embed(
             title=q[0],
             description=desc,
@@ -208,6 +208,11 @@ class Quiz(commands.Cog):
                                           timeout=60.0)
         if confirm.content.startswith('n') or confirm.content.startswith('N'):
             await ctx.send("Cancelled")
+            return
+        author = str(ctx.author).split("#")
+        if author[0] != quizauthor[0]:
+            print(f'{ctx.author} failed to delete command {quizname}')
+            await ctx.send("Quizzes can only be deleted by their author")
             return
         try:
             c.execute("DELETE FROM quiz WHERE name='" + quizname + "';")

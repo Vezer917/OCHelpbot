@@ -111,7 +111,7 @@ async def marco(ctx):
 
 
 # This command should be in its own cog and streamlined to wait for user input
-@bot.command(name='register', help='Allows you to input information about yourself into the bot')
+@bot.command(name='register', help='Allows you to input information about yourself into the bot', hidden=True)
 async def register(ctx):
     # Checks if they already have a database row
     c.execute('SELECT * FROM users WHERE id=' + str(ctx.author.id))
@@ -164,13 +164,14 @@ async def register(ctx):
             await ctx.author.dm_channel.send("Thank you, " + userinput[2] + " has been set as your year.")
 
 
-@bot.command(name='whoami', help='Returns the information you have given the bot')
+@bot.command(name='whoami', help='Returns the information you have given the bot', hidden=True)
 async def who(ctx):
     c.execute("SELECT fname, program, year FROM users WHERE id='" + str(ctx.author.id) + "';")
     await ctx.channel.send(c.fetchone())
 
 
-@bot.command(name='whois', help='Returns info from bot')
+@bot.command(name='whois', help='Returns info from bot', hidden=True)
+@commands.has_role('admin')
 async def whois(ctx):
     userinput = ctx.message.content.split(' ')
     # Checks if they already have a dm channel
@@ -189,6 +190,7 @@ async def whois(ctx):
                                      "\nProgram: " + str(p))
 
 
+# This should be moved to its own cog and given additional functionality
 @bot.command(name='links', help='Sends a list of useful links about a specified class')
 async def links(ctx):
     userinput = ctx.message.content.split(' ')
@@ -220,7 +222,7 @@ async def on_command_error(ctx, error):
         await ctx.send('You do not have the correct role for this command.')
 
 
-@bot.command(name='it', help='Responds with a random quote from The IT Crowd')
+@bot.command(name='it', help='Responds with a random quote from The IT Crowd', hidden=True)
 async def it_crowd(ctx):
     it_crowd_quotes = [
         'There was a fire...*at a Sea Parks?*',

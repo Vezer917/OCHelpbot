@@ -57,6 +57,7 @@ class Help(commands.Cog):
             # Outputs to channel
 
             await ctx.send(embed=embed, content=None)
+            await ctx.send("Type '!help [COMMAND]' for additional information about that specific command")
             return
         else:
             arg = message[1]
