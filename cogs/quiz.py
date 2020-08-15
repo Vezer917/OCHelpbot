@@ -16,6 +16,8 @@ c = dbcon.c
 # - Start quiz:  [ ] Run either as individual or group.
 #                [X] Individual quizzes run in private channels
 #                [ ] Improve switch to prevent quiz overlap
+#                [ ] Run each quiz as a separate process so multiple people doing multiple quizzes don't interfere with
+#                      each other
 #
 # The quiz command will need two tables: 'quiz' and 'questions'
 #  quiz : #name (text), questions (int), madeby (text), score (int)
@@ -34,20 +36,22 @@ class Quiz(commands.Cog):
     )
     async def quiz(self, ctx, *, args=None):
         # If there is no course specified
-        name = None
         info = None
-        if str(ctx.channel.type) != 'private':
-            channelname = ctx.channel.name.split('_')
-            name = channelname[0]
-            c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
-            info = c.fetchone()
+        name = None
+        channelname = ctx.channel.name.split('_')
+        name = channelname[0]
+        print(f'{name}')
+        c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
+        info = c.fetchone()
         if args is None:
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             if info is not None:
+                author = str(info[2]).split('#')
+                print(f'{author[0]}')
                 quizname = name
                 desc = ""
                 desc += "\nNumber of Questions: " + info[1]
-                desc += "\nMade by: " + info[2]
+                desc += "\nMade by: " + author[0]
                 embed = discord.Embed(
                     title=quizname,
                     description=desc,
@@ -57,6 +61,7 @@ class Quiz(commands.Cog):
                 await ctx.send(embed=embed, content=None)
                 return
             # no quiz specified and not a course channel
+
             await ctx.send("'!quiz [NAME]' to run a quiz\n"
                            "'!quizlist' to see list of quizzes\n"
                            "'!addquiz [NAME]' to add a quiz\n"
@@ -72,8 +77,8 @@ class Quiz(commands.Cog):
             return
 
         c.execute("SELECT name FROM quiz WHERE name='" + args + "';")
-        info = c.fetchone()
-        if info is None:
+        quizinfo = c.fetchone()
+        if quizinfo is None:
             await ctx.send("Quiz not found\nType '!quizlist' to see a list of all quizzes")
             return
         else:
@@ -81,6 +86,7 @@ class Quiz(commands.Cog):
             await run(self, ctx, args)
             return
         # await ctx.send('Something went wrong if you get this message... 0_0')
+        return
 
     @commands.command(
         name='addquestion',
@@ -180,7 +186,8 @@ class Quiz(commands.Cog):
                                              "\nauthor: " + str(ctx.author))
             return
         else:
-            await ctx.author.dm_channel.send("Quiz created. Type '!addq " + quizname + "' to add questions to this quiz")
+            await ctx.author.dm_channel.send(
+                "Quiz created. Type '!addq " + quizname + "' to add questions to this quiz")
         return
 
     @commands.command(
@@ -210,6 +217,7 @@ class Quiz(commands.Cog):
             await ctx.send("Cancelled")
             return
         author = str(ctx.author).split("#")
+        # check to see if the quiz author is the same as the message author
         if author[0] != quizauthor[0]:
             print(f'{ctx.author} failed to delete command {quizname}')
             await ctx.send("Quizzes can only be deleted by their author")
