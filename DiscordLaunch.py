@@ -30,11 +30,12 @@ c = conn.cursor()
 # We implemented our own version of the 'help' command
 bot.remove_command('help')
 # define the cogs
-cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand']
+cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand', 'cogs.links']
 
 
 @bot.event
 async def on_ready():
+    print(f'Greetings, Batman')
     print(f'Logged in as {bot.user.name} - {bot.user.id}')
     for cog in cogs:
         bot.load_extension(cog)
@@ -43,6 +44,22 @@ async def on_ready():
 # Below are the actual commands for the bot that will eventually end up in Cogs.
 # What is a Cog? A Cog is an easy way to divide parts of your program into separate files.
 # This will make it much easier to separate our command groups. (Quiz, Help, etc.)
+
+
+@bot.command(name='echo', help='echo', hidden=True)
+@commands.has_role('admin')
+async def echo(ctx):
+    await ctx.send("Which channel do you want me to send message to?\n(please enter exact name)")
+    channel = await bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+    channelID = discord.utils.get(ctx.guild.channels, name=channel.content)
+    print(f'channel to send to: {channelID}')
+    if channelID is None:
+        await ctx.send('channel not found')
+        return
+    await ctx.send("Please enter the message to send")
+    message_to_send = await bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+    await channelID.send(message_to_send.content)
+    return
 
 
 @bot.command(name='profquote', help='Responds with a random profquote')
@@ -188,32 +205,6 @@ async def whois(ctx):
     p = curr[2]
     await ctx.author.dm_channel.send("" + userinput[1] + " is: \nFirst name: " + str(n) + "\nYear: " + str(y) +
                                      "\nProgram: " + str(p))
-
-
-# This should be moved to its own cog and given additional functionality
-@bot.command(name='links', help='Sends a list of useful links about a specified class')
-async def links(ctx):
-    userinput = ctx.message.content.split(' ')
-
-    if len(userinput) < 2:
-        # Displayed when command is not correctly inputted
-        await ctx.channel.send('Syntax for links: !links [Course acronym eg. COSC111]')
-        return
-
-    c.execute("SELECT content FROM links WHERE class='" + userinput[1].upper() + "';")
-    curr = c.fetchone()
-
-    if curr is None:
-        # Printed out when no links match the arguments class
-        await ctx.channel.send('Sorry, nothing was found in the database with the class: ' + userinput[1])
-        return
-    else:
-        message = "Links for " + userinput[1] + ":\n"
-        while curr is not None:
-            message += curr[0] + '\n'
-            curr = c.fetchone()
-
-    await ctx.channel.send(message)
 
 
 @bot.event

@@ -40,14 +40,12 @@ class Quiz(commands.Cog):
         name = None
         channelname = ctx.channel.name.split('_')
         name = channelname[0]
-        print(f'{name}')
         c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
         info = c.fetchone()
         if args is None:
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             if info is not None:
                 author = str(info[2]).split('#')
-                print(f'{author[0]}')
                 quizname = name
                 desc = ""
                 desc += "\nNumber of Questions: " + info[1]
