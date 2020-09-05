@@ -38,6 +38,7 @@ class Links(commands.Cog):
             info = c.fetchall()
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             if info is not None:
+                await ctx.send("*Warning: Follow links at your own risk!*")
                 coursename = str.upper(name)
                 counter = 0
                 embed = discord.Embed(
@@ -61,7 +62,7 @@ class Links(commands.Cog):
         if info is None:
             await ctx.send(f"No links for {coursename} found")
             return
-
+        await ctx.send("*Warning: Follow links at your own risk!*")
         counter = 0
         embed = discord.Embed(
             title=coursename,

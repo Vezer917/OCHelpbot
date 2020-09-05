@@ -73,7 +73,8 @@ class Quiz(commands.Cog):
                 return
             await run(self, ctx, name)
             return
-
+        # clean the args to prevent SQL injection
+        args = dbcon.sanitize(args)
         c.execute("SELECT name FROM quiz WHERE name='" + args + "';")
         quizinfo = c.fetchone()
         if quizinfo is None:
@@ -167,6 +168,8 @@ class Quiz(commands.Cog):
         if arg is None:
             await ctx.send("Please enter a name of the quiz\nEg: !makequiz Ken Trivia")
             return
+        # clean the arg to prevent SQL injection
+        arg = dbcon.sanitize(arg)
         quizname = str(arg)
         c.execute("SELECT name FROM quiz WHERE name='" + quizname + "';")
         q = c.fetchone()
@@ -197,6 +200,8 @@ class Quiz(commands.Cog):
         if arg is None:
             await ctx.send("Please enter a name of the quiz to delete.\nEg: !delquiz Ken Trivia")
             return
+        # clean the arg to prevent SQL injection
+        arg = dbcon.sanitize(arg)
         quizname = str(arg)
         c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + quizname + "';")
         q = c.fetchone()

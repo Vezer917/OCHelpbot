@@ -99,7 +99,7 @@ async def add_quote(ctx):
 async def create_channel(ctx, channel_name: str):
     guild = ctx.guild
     existing_channel = discord.utils.get(guild.channels, name=channel_name)
-    if not existing_channel:
+    if existing_channel is None:
         print(f'Creating a new channel: {channel_name}')
         await guild.create_text_channel(channel_name)
 
