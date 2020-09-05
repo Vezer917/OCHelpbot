@@ -55,12 +55,13 @@ class CourseInfo(commands.Cog):
                 await ctx.send("Please enter '!courseinfo' followed by a course code\nEg: !courseinfo COSC111")
             return
         # returns the specific course (even if you are in course channel)
-        c.execute("SELECT desc, pre_req, core_req FROM course_info WHERE course_id='" + str.lower(userinput[1]) + "';")
+        coursename = dbcon.sanitize(userinput[1])
+        c.execute(f"SELECT desc, pre_req, core_req FROM course_info WHERE course_id='{str.lower(coursename)}';")
         info = c.fetchone()
         if info is None:
             await ctx.send("Class not found")
             return
-        coursename = str.upper(userinput[1])
+        coursename = str.upper(coursename)
         desc = info[0]
         if len(info[1]) > 0:
             desc += "\nPre-reqs: " + info[1]

@@ -56,7 +56,7 @@ class Links(commands.Cog):
                 await ctx.send("Please enter '!links' followed by a course code\nEg: !links COSC111")
             return
         # returns the specific course/topic (even if you are in course channel)
-        coursename = str.upper(userinput[1])
+        coursename = dbcon.sanitize(str.upper(userinput[1]))
         c.execute("SELECT course, url, description FROM links WHERE course='" + coursename + "';")
         info = c.fetchall()
         if info is None:
@@ -119,6 +119,8 @@ class Links(commands.Cog):
         if args is None:
             await ctx.send("Please use the syntax '!deletelink [COURSE/TOPIC]'")
             return
+        # clean the args to prevent sql injection
+        args = dbcon.sanitize(args)
         coursename = args
         c.execute("SELECT course, url, description FROM links WHERE course='" + coursename + "';")
         info = c.fetchall()
@@ -142,23 +144,24 @@ class Links(commands.Cog):
         await ctx.author.dm_channel.send("Please tell me the title of the link to delete:"
                                          "\n**WARNING: CANNOT BE UNDONE**")
         link = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
-        print(f'{link.content} k?!?')
-        c.execute(f"SELECT description FROM links WHERE description='{link.content}' IN "
+        link = dbcon.sanitize(link.content)
+        print(f'{link} k?!?')
+        c.execute(f"SELECT description FROM links WHERE description='{link}' IN "
                   f"(SELECT course FROM links WHERE course='{coursename}'); ")
         verify = c.fetchone()
         if verify is None:
             await ctx.send("Link not found")
             return
         try:
-            c.execute(f"DELETE FROM links WHERE course='{coursename}' AND description='{link.content}';")
+            c.execute(f"DELETE FROM links WHERE course='{coursename}' AND description='{link}';")
             conn.commit()
         except sqlite3.Error as e:
             print(type(e).__name__)
         except:
             await ctx.send("Hmmm.... something went wrong")
             return
-        print(f'{ctx.author} deleted the link {link.content}')
-        await ctx.author.dm_channel.send(f'"{link.content}" deleted')
+        print(f'{ctx.author} deleted the link {link}')
+        await ctx.author.dm_channel.send(f'"{link}" deleted')
         return
 
 

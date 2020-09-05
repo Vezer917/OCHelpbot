@@ -60,7 +60,7 @@ class Help(commands.Cog):
             await ctx.send("Type '!help [COMMAND]' for additional information about that specific command")
             return
         else:
-            arg = message[1]
+            arg = dbcon.sanitize(message[1])
             argtitle = "!" + arg
             embed = discord.Embed(
                 title=argtitle,
