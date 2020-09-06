@@ -44,20 +44,23 @@ async def on_ready():
 # Below are the actual commands for the bot that will eventually end up in Cogs.
 # What is a Cog? A Cog is an easy way to divide parts of your program into separate files.
 # This will make it much easier to separate our command groups. (Quiz, Help, etc.)
+#
+# Set hidden=True if you don't want the command to show up when '!help' is called.
 
 
-@bot.command(name='echo', help='echo', hidden=True)
+@bot.command(name='echo', help='Send a message from the bot to a specific channel', hidden=True)
 @commands.has_role('admin')
 async def echo(ctx):
     await ctx.send("Which channel do you want me to send message to?\n(please enter exact name)")
     channel = await bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
     channelID = discord.utils.get(ctx.guild.channels, name=channel.content)
-    print(f'channel to send to: {channelID}')
+    print(f'{ctx.author} sent a message to the channel: {channelID}')
     if channelID is None:
         await ctx.send('channel not found')
         return
     await ctx.send("Please enter the message to send")
     message_to_send = await bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
+    print(f'"{message_to_send.content}"')
     await channelID.send(message_to_send.content)
     return
 
@@ -94,7 +97,7 @@ async def add_quote(ctx):
             await ctx.send("Quote added")
 
 
-@bot.command(name='createchannel', aliases=['newchannel', 'makechannel', 'addchannel'])
+@bot.command(name='createchannel', aliases=['newchannel', 'makechannel', 'addchannel'], hidden=True)
 @commands.has_role('admin')
 async def create_channel(ctx, channel_name: str):
     guild = ctx.guild
