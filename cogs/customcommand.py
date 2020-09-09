@@ -132,20 +132,20 @@ class CustomCommand(commands.Cog):
                 await ctx.send("Cancelled")
                 return
             author = str(ctx.author).split("#")
-            if ctx.message.author.Permissions.administrator:
-                c.execute(f"DELETE FROM customcommands WHERE name='{cmdname.content} COLLATE NOCASE';")
-                c.commit()
+            if ctx.message.author.top_role.permissions.administrator:
+                print(f'user is admin')
+                c.execute(f"DELETE FROM customcommands WHERE name='{cmdname.content}';")
                 await ctx.send(f"{cmdname.content} deleted")
                 print(f"{cmdname.content} deleted by {ctx.author}")
-                return
-            if author[0] != cmdauthor[0]:
-                print(f'{ctx.author} failed to delete command {cmdname.content}')
-                await ctx.send("Commands can only be deleted by their author")
             else:
-                c.execute("DELETE FROM customcommands WHERE name='" + cmdname.content + "';")
-                c.commit()
-                await ctx.send(f"{cmdname.content} deleted")
-                print(f"{cmdname.content} deleted by {ctx.author}")
+                if author[0] != cmdauthor[0]:
+                    print(f'{ctx.author} failed to delete command {cmdname.content}')
+                    await ctx.send("Commands can only be deleted by their author")
+                else:
+                    c.execute("DELETE FROM customcommands WHERE name='" + cmdname.content + "';")
+                    await ctx.send(f"{cmdname.content} deleted")
+                    print(f"{cmdname.content} deleted by {ctx.author}")
+            conn.commit()
             return
         # modify command
         if args == 'mod' or args == 'm':
