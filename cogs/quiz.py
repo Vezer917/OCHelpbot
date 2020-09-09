@@ -245,7 +245,7 @@ async def run(self, ctx, args):
     if ctx.author.dm_channel is None:
         await ctx.author.create_dm()
     # grab quiz
-    c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + args + "';")
+    c.execute(f"SELECT name, questions, madeby, score FROM quiz WHERE name='{args}' COLLATE NOCASE;")
     quizinfo = c.fetchone()
     quizname = str(quizinfo[0])
     desc = ""

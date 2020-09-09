@@ -34,7 +34,7 @@ class Links(commands.Cog):
         if len(userinput) < 2:
             channelname = ctx.channel.name.split('_')
             name = channelname[0]
-            c.execute("SELECT course, url, description FROM links WHERE course='" + str.upper(name) + "';")
+            c.execute(f"SELECT course, url, description FROM links WHERE course='{name}' COLLATE NOCASE;")
             info = c.fetchall()
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             if info is not None:
@@ -56,8 +56,8 @@ class Links(commands.Cog):
                 await ctx.send("Please enter '!links' followed by a course code\nEg: !links COSC111")
             return
         # returns the specific course/topic (even if you are in course channel)
-        coursename = dbcon.sanitize(str.upper(userinput[1]))
-        c.execute("SELECT course, url, description FROM links WHERE course='" + coursename + "';")
+        coursename = dbcon.sanitize(userinput[1])
+        c.execute(f"SELECT course, url, description FROM links WHERE course='{coursename}' COLLATE NOCASE;")
         info = c.fetchall()
         if info is None:
             await ctx.send(f"No links for {coursename} found")
@@ -114,20 +114,17 @@ class Links(commands.Cog):
     )
     async def deletelink(self, ctx, *, args=None):
         # check to see if private channel exists, if not makes one
-        if ctx.author.dm_channel is None:
-            await ctx.author.create_dm()
         if args is None:
             await ctx.send("Please use the syntax '!deletelink [COURSE/TOPIC]'")
             return
         # clean the args to prevent sql injection
         args = dbcon.sanitize(args)
         coursename = args
-        c.execute("SELECT course, url, description FROM links WHERE course='" + coursename + "';")
+        c.execute(f"SELECT course, url, description FROM links WHERE course='{coursename}' COLLATE NOCASE;")
         info = c.fetchall()
         if info is None:
             await ctx.send(f"No links for {coursename} found")
             return
-
         counter = 0
         embed = discord.Embed(
             title=coursename,
@@ -140,27 +137,26 @@ class Links(commands.Cog):
         # there is a 6000 char limit to embeds
         if len(embed) > 5999:
             print(f'its over 6000! {coursename}')
-        await ctx.author.dm_channel.send(embed=embed, content=None)
-        await ctx.author.dm_channel.send("Please tell me the title of the link to delete:"
-                                         "\n**WARNING: CANNOT BE UNDONE**")
+        await ctx.send(embed=embed, content=None)
+        await ctx.send("Please tell me the title of the link to delete:"
+                       "\n**WARNING: CANNOT BE UNDONE**")
         link = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
         link = dbcon.sanitize(link.content)
-        print(f'{link} k?!?')
-        c.execute(f"SELECT description FROM links WHERE description='{link}' IN "
-                  f"(SELECT course FROM links WHERE course='{coursename}'); ")
+        c.execute(f"SELECT description FROM links WHERE description='{link}' COLLATE NOCASE IN "
+                  f"(SELECT course FROM links WHERE course='{coursename}' COLLATE NOCASE); ")
         verify = c.fetchone()
         if verify is None:
             await ctx.send("Link not found")
             return
         try:
-            c.execute(f"DELETE FROM links WHERE course='{coursename}' AND description='{link}';")
+            c.execute(f"DELETE FROM links WHERE course='{coursename}' COLLATE NOCASE AND description='{link}' COLLATE NOCASE;")
             conn.commit()
         except sqlite3.Error as e:
             print(type(e).__name__)
         except:
             await ctx.send("Hmmm.... something went wrong")
             return
-        print(f'{ctx.author} deleted the link {link}')
+        print(f'{ctx.author} Deleted {link} from {coursename}')
         await ctx.author.dm_channel.send(f'"{link}" deleted')
         return
 

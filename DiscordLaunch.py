@@ -185,6 +185,7 @@ async def register(ctx):
 
 
 @bot.command(name='whoami', help='Returns the information you have given the bot', hidden=True)
+@commands.has_role('admin')
 async def who(ctx):
     c.execute("SELECT fname, program, year FROM users WHERE id='" + str(ctx.author.id) + "';")
     await ctx.channel.send(c.fetchone())
@@ -278,17 +279,27 @@ async def on_member_join(member):
     # Gets all on join commands from customcommands
     c.execute("SELECT * FROM customcommands WHERE context='onJoin'")
     rows = c.fetchall()
-
     # Adds all custom messages to the intro separated by newlines
     output = 'Welcome to ' + member.guild.name + '!\n'
     for row in rows:
         output += row[2] + '\n'
-
     # Sends result to users dms
     if member.dm_channel is None:
         await member.create_dm()
-
     await member.dm_channel.send(output)
+
+
+# play back the 'on join' messages
+@bot.command('echo_on_join')
+async def echo_on_join(ctx):
+    c.execute("SELECT name, value FROM customcommands WHERE context='onJoin'")
+    rows = c.fetchall()
+    member = ctx.author
+    # Adds all custom messages to the intro separated by newlines
+    output = f'Welcome to **{member.guild.name}**!\nPlease read the rules in the **rules-and-conduct** channel before posting.\n'
+    for row in rows:
+        output += f'*{row[0]}*: {row[1]}\n'
+    await ctx.send(output)
 
 
 # auto emoji reactions

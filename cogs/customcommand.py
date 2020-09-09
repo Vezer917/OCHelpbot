@@ -7,6 +7,8 @@ import dbcon
 conn = dbcon.conn
 c = dbcon.c
 
+# list of words that cannot be custom command name
+
 
 # The customcommand command should have the following functionality:
 # - Add command
@@ -24,14 +26,19 @@ class CustomCommand(commands.Cog):
         help="Add, Remove, Modify or Delete custom commands. Type '!customcommand' to see a list of options",
         aliases=['cc', 'custom']
     )
-    async def courseinfo(self, ctx, *, args=None):
+    async def customcommand(self, ctx, *, args=None):
+        if args is not None:
+            args = dbcon.sanitize(args)
         # add command
         if args == 'add' or args == 'a':
-            await ctx.send("What will the name of the command be:")
+            await ctx.send("What will the name of the command be:\n*(one word only please)*")
             cmdname = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
                                               timeout=60.0)
+            if " " in cmdname.content:
+                await ctx.send("No spaces please... cc add cancelled")
+                return
             # check to see if cmd already exists
-            c.execute("SELECT name FROM customcommands WHERE name='" + str(cmdname.content) + "';")
+            c.execute(f"SELECT name FROM customcommands WHERE name='{str(cmdname.content)}';")
             name = c.fetchone()
             if name is not None:
                 await ctx.send("A command by that name already exists.\n"
@@ -95,7 +102,7 @@ class CustomCommand(commands.Cog):
             cmdname = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
                                                 timeout=60.0)
             if cmdname.content.startswith("!"):
-                ctx.send("Cancelled cc d")
+                await ctx.send("Cancelled cc d")
                 return
             try:
                 c.execute("SELECT name, value, context, help, author FROM customcommands WHERE name='" + str(cmdname.content) + "';")
@@ -125,12 +132,18 @@ class CustomCommand(commands.Cog):
                 await ctx.send("Cancelled")
                 return
             author = str(ctx.author).split("#")
-
+            if ctx.message.author.Permissions.administrator:
+                c.execute(f"DELETE FROM customcommands WHERE name='{cmdname.content} COLLATE NOCASE';")
+                c.commit()
+                await ctx.send(f"{cmdname.content} deleted")
+                print(f"{cmdname.content} deleted by {ctx.author}")
+                return
             if author[0] != cmdauthor[0]:
                 print(f'{ctx.author} failed to delete command {cmdname.content}')
                 await ctx.send("Commands can only be deleted by their author")
             else:
-                c.execute("DELETE FROM customcommands WHERE name='" + str(cmdname.content) + "';")
+                c.execute("DELETE FROM customcommands WHERE name='" + cmdname.content + "';")
+                c.commit()
                 await ctx.send(f"{cmdname.content} deleted")
                 print(f"{cmdname.content} deleted by {ctx.author}")
             return
