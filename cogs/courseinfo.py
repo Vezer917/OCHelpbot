@@ -2,9 +2,14 @@ from discord.ext import commands
 import discord
 import dbcon
 
-conn = dbcon.conn
-c = dbcon.c
+import sqlalchemy
+from sqlalchemy import create_engine
 
+# Alchemy test
+# conn = dbcon.conn
+# c = dbcon.c
+engine = create_engine('sqlite:///./app/botdb.db', echo=True)
+c = engine.connect()
 
 # The courseinfo command should have the following functionality:
 # - Add course info
@@ -32,16 +37,21 @@ class CourseInfo(commands.Cog):
         if len(userinput) < 2:
             channelname = ctx.channel.name.split('_')
             name = channelname[0]
-            c.execute("SELECT desc, pre_req, core_req FROM course_info WHERE course_id='" + str.lower(name) + "';")
-            info = c.fetchone()
+            # Alchemy test
+            info = c.execute("SELECT desc, pre_req, core_req FROM course_info WHERE course_id='" + str.lower(name) + "';")
+            info = info.fetchone()
+            for row in info:
+                print(row)
+
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             if info is not None:
                 coursename = str.upper(name)
-                desc = info[0]
-                if len(info[1]) > 0:
-                    desc += "\nPre-reqs: " + info[1]
-                if len(info[2]) > 0:
-                    desc += "\nCore reqs: " + info[2]
+                # desc = info[0]
+                desc = info.desc
+                if len(info.pre_req) > 0:
+                    desc += "\nPre-reqs: " + info.pre_req
+                if len(info.core_req) > 0:
+                    desc += "\nCore reqs: " + info.core_req
 
                 embed = discord.Embed(
                     title=coursename,
@@ -56,8 +66,8 @@ class CourseInfo(commands.Cog):
             return
         # returns the specific course (even if you are in course channel)
         coursename = dbcon.sanitize(userinput[1])
-        c.execute(f"SELECT desc, pre_req, core_req FROM course_info WHERE course_id='{str.lower(coursename)}';")
-        info = c.fetchone()
+        info = c.execute(f"SELECT desc, pre_req, core_req FROM course_info WHERE course_id='{str.lower(coursename)}';")
+        # info = c.fetchone()
         if info is None:
             await ctx.send("Class not found")
             return

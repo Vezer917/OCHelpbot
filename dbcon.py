@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 import sqlite3
 
+from config import basedir
 # Load dbfile env variable to pass to cogs
 load_dotenv()
 dbfile = os.getenv('DATABASE_FILE')

@@ -7,7 +7,8 @@ import dbcon
 conn = dbcon.conn
 c = dbcon.c
 
-# list of words that cannot be custom command name
+# list of words that cannot be customcommand name
+nouse = ['rank', 'help', 'marco', 'quiz', 'customcommand', 'echo']
 
 
 # The customcommand command should have the following functionality:
@@ -36,6 +37,9 @@ class CustomCommand(commands.Cog):
                                               timeout=60.0)
             if " " in cmdname.content:
                 await ctx.send("No spaces please... cc add cancelled")
+                return
+            if cmdname.content in nouse:
+                await ctx.send(f"{cmdname.content} is a restricted word... cc add cancelled")
                 return
             # check to see if cmd already exists
             c.execute(f"SELECT name FROM customcommands WHERE name='{str(cmdname.content)}';")
