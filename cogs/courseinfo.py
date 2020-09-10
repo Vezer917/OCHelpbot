@@ -3,6 +3,7 @@ from os import environ
 from discord.ext import commands
 import discord
 import dbcon
+import os
 
 import sqlalchemy
 from sqlalchemy import create_engine
@@ -10,7 +11,7 @@ from sqlalchemy import create_engine
 # Alchemy test
 # conn = dbcon.conn
 # c = dbcon.c
-engine = create_engine(environ.get('SQLALCHEMY_DATABASE_URI'), echo=True)
+engine = create_engine(os.getenv('DATABASE_URL'), echo=True)
 c = engine.connect()
 
 # The courseinfo command should have the following functionality:
