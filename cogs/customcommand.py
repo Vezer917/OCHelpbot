@@ -136,6 +136,7 @@ class CustomCommand(commands.Cog):
                 await ctx.send("Cancelled")
                 return
             author = str(ctx.author).split("#")
+            # if caller is admin, they can delete any command
             if ctx.message.author.top_role.permissions.administrator:
                 print(f'user is admin')
                 c.execute(f"DELETE FROM customcommands WHERE name='{cmdname.content}';")

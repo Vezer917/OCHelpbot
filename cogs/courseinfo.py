@@ -11,7 +11,7 @@ from sqlalchemy import create_engine
 # Alchemy test
 # conn = dbcon.conn
 # c = dbcon.c
-engine = create_engine(os.getenv('DATABASE_URL'), echo=True)
+engine = create_engine('sqlite:///'+dbcon.dbfile, echo=True)
 c = engine.connect()
 
 # The courseinfo command should have the following functionality:
@@ -41,13 +41,13 @@ class CourseInfo(commands.Cog):
             channelname = ctx.channel.name.split('_')
             name = channelname[0]
             # Alchemy test
-            info = c.execute("SELECT desc, pre_req, core_req FROM course_info WHERE course_id='" + str.lower(name) + "';")
+            info = c.execute(f"SELECT desc, pre_req, core_req FROM course_info WHERE course_id='{str.lower(name)}';")
             info = info.fetchone()
-            for row in info:
-                print(row)
-
+            if info is None:
+                await ctx.send("Please enter '!courseinfo' followed by a course code\nEg: !courseinfo COSC111")
+                return
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
-            if info is not None:
+            else:
                 coursename = str.upper(name)
                 # desc = info[0]
                 desc = info.desc
@@ -63,23 +63,20 @@ class CourseInfo(commands.Cog):
                 )
                 await ctx.send(embed=embed, content=None)
                 return
-            # no course specified and not a course channel
-            else:
-                await ctx.send("Please enter '!courseinfo' followed by a course code\nEg: !courseinfo COSC111")
-            return
         # returns the specific course (even if you are in course channel)
         coursename = dbcon.sanitize(userinput[1])
         info = c.execute(f"SELECT desc, pre_req, core_req FROM course_info WHERE course_id='{str.lower(coursename)}';")
+        info = info.fetchone()
         # info = c.fetchone()
         if info is None:
             await ctx.send("Class not found")
             return
         coursename = str.upper(coursename)
-        desc = info[0]
-        if len(info[1]) > 0:
-            desc += "\nPre-reqs: " + info[1]
-        if len(info[2]) > 0:
-            desc += "\nCore reqs: " + info[2]
+        desc = info.desc
+        if len(info.pre_req) > 0:
+            desc += "\nPre-reqs: " + info.pre_req
+        if len(info.core_req) > 0:
+            desc += "\nCore reqs: " + info.core_req
 
         embed = discord.Embed(
             title=coursename,

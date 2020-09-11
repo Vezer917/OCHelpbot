@@ -54,6 +54,21 @@ class Help(commands.Cog):
                     customcmds += row[0] + " *(onJoin)*\n"
             embed.add_field(name="Custom Commands:", value=customcmds, inline=False)
 
+            # if caller is admin, they get to see all commands
+            HiddenCommands = discord.Embed(
+                title="Help",
+                description=desc,
+                color=0x206694
+            )
+            hide = ""
+            for command in self.bot.commands:
+                if command.hidden:
+                    hide += f"!{command}\n"
+            HiddenCommands.add_field(name="Admin-only Commands:", value=hide, inline=False)
+            if ctx.author.dm_channel is None:
+                await ctx.author.create_dm()
+            await ctx.author.dm_channel.send(embed=HiddenCommands, content=None)
+
             # Outputs to channel
 
             await ctx.send(embed=embed, content=None)
