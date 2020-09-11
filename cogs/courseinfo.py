@@ -11,7 +11,8 @@ from sqlalchemy import create_engine
 # Alchemy test
 # conn = dbcon.conn
 # c = dbcon.c
-engine = create_engine('sqlite:///'+dbcon.dbfile, echo=True)
+# if you set echo=True then you will get a printout of each query to the DB, pretty useful
+engine = create_engine('sqlite:///'+dbcon.dbfile, echo=False)
 c = engine.connect()
 
 # The courseinfo command should have the following functionality:

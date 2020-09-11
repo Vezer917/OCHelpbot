@@ -84,7 +84,7 @@ class Quiz(commands.Cog):
             await ctx.send('Starting quiz... Type !end to stop')
             await run(self, ctx, args)
             return
-        # await ctx.send('Something went wrong if you get this message... 0_0')
+        # await ctx.send('Something went very wrong if you got this message... 0_0')
         return
 
     @commands.command(
