@@ -1,19 +1,8 @@
-from os import environ
-
 from discord.ext import commands
 import discord
 import dbcon
-import os
 
-import sqlalchemy
-from sqlalchemy import create_engine
-
-# Alchemy test
-# conn = dbcon.conn
-# c = dbcon.c
-# if you set echo=True then you will get a printout of each query to the DB, pretty useful
-engine = create_engine('sqlite:///'+dbcon.dbfile, echo=False)
-c = engine.connect()
+c = dbcon.engine.connect()
 
 # The courseinfo command should have the following functionality:
 # - Add course info
@@ -41,7 +30,6 @@ class CourseInfo(commands.Cog):
         if len(userinput) < 2:
             channelname = ctx.channel.name.split('_')
             name = channelname[0]
-            # Alchemy test
             info = c.execute(f"SELECT desc, pre_req, core_req FROM course_info WHERE course_id='{str.lower(name)}';")
             info = info.fetchone()
             if info is None:
@@ -68,7 +56,6 @@ class CourseInfo(commands.Cog):
         coursename = dbcon.sanitize(userinput[1])
         info = c.execute(f"SELECT desc, pre_req, core_req FROM course_info WHERE course_id='{str.lower(coursename)}';")
         info = info.fetchone()
-        # info = c.fetchone()
         if info is None:
             await ctx.send("Class not found")
             return
