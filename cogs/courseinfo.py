@@ -38,7 +38,6 @@ class CourseInfo(commands.Cog):
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
             else:
                 coursename = str.upper(name)
-                # desc = info[0]
                 desc = info.desc
                 if len(info.pre_req) > 0:
                     desc += "\nPre-reqs: " + info.pre_req

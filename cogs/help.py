@@ -44,7 +44,7 @@ class Help(commands.Cog):
             embed.add_field(name="Hardcoded Commands:", value=hardcoded, inline=False)
 
             # Custom commands
-            c.execute('SELECT name, context FROM customcommands')
+            c.execute('SELECT name, context FROM customcommands ORDER BY name')
             rows = c.fetchall()
             customcmds = ""
             for row in rows:

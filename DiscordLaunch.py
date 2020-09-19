@@ -290,7 +290,7 @@ async def on_member_join(member):
 
 
 # play back the 'on join' messages
-@bot.command('echo_on_join')
+@bot.command(name='echo_on_join', hidden=True, alias=['eoj'])
 async def echo_on_join(ctx):
     c.execute("SELECT name, value FROM customcommands WHERE context='onJoin'")
     rows = c.fetchall()
