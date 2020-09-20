@@ -1,4 +1,5 @@
 # DiscordLaunch.py
+from datetime import datetime
 import os
 import random
 import sqlite3
@@ -128,6 +129,13 @@ async def make_admin(ctx):
 @bot.command(name='marco', help='Test to see if bot is running')
 async def marco(ctx):
     await ctx.channel.send('polo')
+
+
+# return time (good for international students)
+@bot.command(name='time', help='Return the current time')
+async def time(ctx):
+    current_time = datetime.now().strftime('%H:%M:%S')
+    await ctx.channel.send(f'The current time is: {current_time} PST')
 
 
 # This command should be in its own cog and streamlined to wait for user input
