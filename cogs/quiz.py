@@ -40,7 +40,8 @@ class Quiz(commands.Cog):
         name = None
         channelname = ctx.channel.name.split('_')
         name = channelname[0]
-        c.execute("SELECT name, questions, madeby, score FROM quiz WHERE name='" + str.lower(name) + "';")
+        print(name)
+        c.execute(f"SELECT name, questions, madeby, score FROM quiz WHERE name='{str.lower(name)}';")
         info = c.fetchone()
         if args is None:
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
@@ -75,7 +76,7 @@ class Quiz(commands.Cog):
             return
         # clean the args to prevent SQL injection
         args = dbcon.sanitize(args)
-        c.execute("SELECT name FROM quiz WHERE name='" + args + "';")
+        c.execute(f"SELECT name FROM quiz WHERE name='{args}';")
         quizinfo = c.fetchone()
         if quizinfo is None:
             await ctx.send("Quiz not found\nType '!quizlist' to see a list of all quizzes")
@@ -84,8 +85,6 @@ class Quiz(commands.Cog):
             await ctx.send('Starting quiz... Type !end to stop')
             await run(self, ctx, args)
             return
-        # await ctx.send('Something went very wrong if you got this message... 0_0')
-        return
 
     @commands.command(
         name='addquestion',
@@ -264,6 +263,7 @@ async def run(self, ctx, args):
     counter = 0
     for q in questions:
         counter += 1
+        msg = ""
         await ctx.author.dm_channel.send("Question " + str(counter) + ":\n" + q[0])
         try:
             msg = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
