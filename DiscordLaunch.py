@@ -322,14 +322,22 @@ async def on_message(message):
             debbed = bot.get_emoji(428621135790473217)
             if debbed is not None:
                 await message.add_reaction(debbed)
-        if word == "ken":
+        if word == "ken" or word == "chidlow":
             kenned = bot.get_emoji(510487098902577153)
             if kenned is not None:
                 await message.add_reaction(kenned)
         if word == "alan":
-            kenned = bot.get_emoji(428236272973381633)
-            if kenned is not None:
-                await message.add_reaction(kenned)
+            alaned = bot.get_emoji(428236272973381633)
+            if alaned is not None:
+                await message.add_reaction(alaned)
+        if word == "olga" or word == "however":
+            olgad = bot.get_emoji(516694436919377921)
+            if olgad is not None:
+                await message.add_reaction(olgad)
+        if word == "jim" or word == "jn":
+            jimmed = bot.get_emoji(537695339973443608)
+            if jimmed is not None:
+                await message.add_reaction(jimmed)
         # custom autoreaction command here:
         # ie !cc a -> name=ken -> context=autoreact -> return=:kenemoji:
         # problem here is you don't want to query the bot everytime there's a message just to look for autoreacts
