@@ -308,22 +308,32 @@ async def echo_on_join(ctx):
 # auto emoji reactions
 @bot.listen('on_message')
 async def on_message(message):
-    # add sunglasses emoji if someone says "cool" in a message
-    if "cool" in message.content.lower():
-        await message.add_reaction(u"\U0001F60E")
-    # add robot emoji
-    if "bot" in message.content.lower():
-        await message.add_reaction(u"\U0001F916")
-    # custom emoji trial
-    # put a backwards slash '\' infront of an emoji and send in discord to get the emoji's ID
-    if "deb" in message.content.lower():
-        debbed = bot.get_emoji(428621135790473217)
-        if debbed is not None:
-            await message.add_reaction(debbed)
-    # custom autoreaction command here:
-    # ie !cc a -> name=ken -> context=autoreact -> return=:kenemoji:
-    # problem here is you don't want to query the bot everytime there's a message just to look for autoreacts
-    # solution could be job scheduling a list of keywords to react to
+    words = message.content.lower().split()
+    for word in words:
+        # add sunglasses emoji if someone says "cool" in a message
+        if word == "cool":
+            await message.add_reaction(u"\U0001F60E")
+        # add robot emoji
+        if word == "bot":
+            await message.add_reaction(u"\U0001F916")
+        # custom emoji trial
+        # put a backwards slash '\' infront of an emoji and send in discord to get the emoji's ID
+        if word == "deb":
+            debbed = bot.get_emoji(428621135790473217)
+            if debbed is not None:
+                await message.add_reaction(debbed)
+        if word == "ken":
+            kenned = bot.get_emoji(510487098902577153)
+            if kenned is not None:
+                await message.add_reaction(kenned)
+        if word == "alan":
+            kenned = bot.get_emoji(428236272973381633)
+            if kenned is not None:
+                await message.add_reaction(kenned)
+        # custom autoreaction command here:
+        # ie !cc a -> name=ken -> context=autoreact -> return=:kenemoji:
+        # problem here is you don't want to query the bot everytime there's a message just to look for autoreacts
+        # solution could be job scheduling a list of keywords to react to
 
 
 # return channel type
