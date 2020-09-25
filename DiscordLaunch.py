@@ -1,5 +1,4 @@
 # DiscordLaunch.py
-from datetime import datetime
 import os
 import random
 import sqlite3
@@ -23,7 +22,7 @@ guildid = os.getenv('GUILDID')
 dbfile = os.getenv('DATABASE_FILE')
 
 # Here you can set your own prefix for commands (we used '!')
-bot = commands.Bot(command_prefix='&')
+bot = commands.Bot(command_prefix='!')
 
 # setting up sqlite
 conn = sqlite3.connect(dbfile)
@@ -31,7 +30,7 @@ c = conn.cursor()
 # We implemented our own version of the 'help' command
 bot.remove_command('help')
 # define the cogs
-cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand', 'cogs.links']
+cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand', 'cogs.links', 'cogs.time']
 
 
 @bot.event
@@ -50,7 +49,7 @@ async def on_ready():
 
 
 @bot.command(name='echo', help='Send a message from the bot to a specific channel', hidden=True)
-@commands.has_role('Administrator')
+@commands.has_permissions(manage_guild=True)
 async def echo(ctx):
     await ctx.send("Which channel do you want me to send message to?\n(please enter exact name)")
     channel = await bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
@@ -99,7 +98,7 @@ async def add_quote(ctx):
 
 
 @bot.command(name='createchannel', aliases=['newchannel', 'makechannel', 'addchannel'], hidden=True)
-@commands.has_role('Administrator')
+@commands.has_permissions(manage_guild=True)
 async def create_channel(ctx, channel_name: str):
     guild = ctx.guild
     existing_channel = discord.utils.get(guild.channels, name=channel_name)
@@ -110,8 +109,8 @@ async def create_channel(ctx, channel_name: str):
 
 # use this command to set admins for the flask portal
 # only a guild admin can use this command
-@bot.command(name='makeAdmin')
-@commands.has_role('Administrator')
+@bot.command(name='makeFlaskAdmin', hidden=True)
+@commands.has_permissions(manage_guild=True)
 async def make_admin(ctx):
     userinput = ctx.message.content.split(' ')
     c.execute('SELECT username FROM user WHERE id=' + userinput[1] + ';')
@@ -129,13 +128,6 @@ async def make_admin(ctx):
 @bot.command(name='marco', help='Test to see if bot is running')
 async def marco(ctx):
     await ctx.channel.send('polo')
-
-
-# return time (good for international students)
-@bot.command(name='time', help='Return the current time')
-async def time(ctx):
-    current_time = datetime.now().strftime('%H:%M:%S')
-    await ctx.channel.send(f'The current time is: {current_time} PST')
 
 
 # This command should be in its own cog and streamlined to wait for user input
@@ -193,14 +185,14 @@ async def register(ctx):
 
 
 @bot.command(name='whoami', help='Returns the information you have given the bot', hidden=True)
-@commands.has_role('Administrator')
+@commands.has_permissions(manage_guild=True)
 async def who(ctx):
     c.execute("SELECT fname, program, year FROM users WHERE id='" + str(ctx.author.id) + "';")
     await ctx.channel.send(c.fetchone())
 
 
 @bot.command(name='whois', help='Returns info from bot', hidden=True)
-@commands.has_role('Administrator')
+@commands.has_permissions(manage_guild=True)
 async def whois(ctx):
     userinput = ctx.message.content.split(' ')
     # Checks if they already have a dm channel
