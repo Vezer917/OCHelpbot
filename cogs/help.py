@@ -57,7 +57,7 @@ class Help(commands.Cog):
             # if caller is admin, they get to see all commands
             HiddenCommands = discord.Embed(
                 title="Help",
-                description=desc,
+                description=None,
                 color=0x206694
             )
             hide = ""
@@ -65,9 +65,11 @@ class Help(commands.Cog):
                 if command.hidden:
                     hide += f"!{command}\n"
             HiddenCommands.add_field(name="Admin-only Commands:", value=hide, inline=False)
-            if ctx.author.dm_channel is None:
-                await ctx.author.create_dm()
-            await ctx.author.dm_channel.send(embed=HiddenCommands, content=None)
+
+            if ctx.message.author.top_role.permissions.administrator:
+                if ctx.author.dm_channel is None:
+                    await ctx.author.create_dm()
+                await ctx.author.dm_channel.send(embed=HiddenCommands, content=None)
 
             # Outputs to channel
 
