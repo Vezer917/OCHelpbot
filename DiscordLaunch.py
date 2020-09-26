@@ -30,7 +30,8 @@ c = conn.cursor()
 # We implemented our own version of the 'help' command
 bot.remove_command('help')
 # define the cogs
-cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand', 'cogs.links', 'cogs.time']
+cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand', 'cogs.links', 'cogs.time',
+        'cogs.autoreacts']
 
 
 @bot.event
@@ -303,45 +304,6 @@ async def echo_on_join(ctx):
     for row in rows:
         output += f'*{row[0]}*: {row[1]}\n'
     await ctx.send(output)
-
-
-# auto emoji reactions
-@bot.listen('on_message')
-async def on_message(message):
-    words = message.content.lower().split()
-    for word in words:
-        # add sunglasses emoji if someone says "cool" in a message
-        if word == "cool":
-            await message.add_reaction(u"\U0001F60E")
-        # add robot emoji
-        if word == "bot":
-            await message.add_reaction(u"\U0001F916")
-        # custom emoji trial
-        # put a backwards slash '\' infront of an emoji and send in discord to get the emoji's ID
-        if word == "deb":
-            debbed = bot.get_emoji(428621135790473217)
-            if debbed is not None:
-                await message.add_reaction(debbed)
-        if word == "ken" or word == "chidlow":
-            kenned = bot.get_emoji(510487098902577153)
-            if kenned is not None:
-                await message.add_reaction(kenned)
-        if word == "alan":
-            alaned = bot.get_emoji(428236272973381633)
-            if alaned is not None:
-                await message.add_reaction(alaned)
-        if word == "olga" or word == "however":
-            olgad = bot.get_emoji(516694436919377921)
-            if olgad is not None:
-                await message.add_reaction(olgad)
-        if word == "jim" or word == "jn":
-            jimmed = bot.get_emoji(537695339973443608)
-            if jimmed is not None:
-                await message.add_reaction(jimmed)
-        # custom autoreaction command here:
-        # ie !cc a -> name=ken -> context=autoreact -> return=:kenemoji:
-        # problem here is you don't want to query the bot everytime there's a message just to look for autoreacts
-        # solution could be job scheduling a list of keywords to react to
 
 
 # return channel type
