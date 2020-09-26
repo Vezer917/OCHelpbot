@@ -91,13 +91,12 @@ class CustomCommand(commands.Cog):
                     sql = "INSERT INTO customcommands (name, context, value, help, author) VALUES (?, ?, ?, ?, ?)"
                     c.execute(sql, (cmdname.content, context, cmdreturn.content, cmdhelp.content, str(ctx.author)))
                     conn.commit()
+                    await ctx.send("Command added")
                 except sqlite3.Error as e:
                     print(type(e).__name__)
                 except:
                     await ctx.send("Hmmm.... something went wrong")
                     return
-                else:
-                    await ctx.send("Command added")
             return
         # delete command
         if args == 'del' or args == 'd':
