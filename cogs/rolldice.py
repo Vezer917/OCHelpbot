@@ -12,7 +12,8 @@ class RollDice(commands.Cog):
 
     @commands.command(
         name='rolldice',
-        help='Rolls dice. \nParameters: !rolldice [no of dice, no of sides]',
+        help='Rolls dice. \nParameters: !rolldice [no of dice] [no of sides]'
+             '\nExample: !rolldice 2 21\nOutput: 13, 17',
         aliases=['rd', 'roll_dice']
     )
     async def roll(self, ctx, number_of_dice: int = 1, number_of_sides: int = 6):
