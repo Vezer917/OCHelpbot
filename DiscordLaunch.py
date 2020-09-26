@@ -247,34 +247,32 @@ async def on_message(message):
     userinput = message.content.split(' ')
     name = userinput[0]
 
-    if name is None:
-        return
+    if name.len() > 1:
+        if name[0] == '!':
+            # Removes '!' from beginning of command
+            name = name[1:]
 
-    if name[0] == '!':
-        # Removes '!' from beginning of command
-        name = name[1:]
+            # Checks for a match in the custom commands table
+            c.execute("SELECT * FROM customcommands WHERE name='" + name + "';")
+            row = c.fetchone()
 
-        # Checks for a match in the custom commands table
-        c.execute("SELECT * FROM customcommands WHERE name='" + name + "';")
-        row = c.fetchone()
+            if row is None:
+                # No matching commands were found in database, stops
+                return
 
-        if row is None:
-            # No matching commands were found in database, stops
-            return
+            if row[1] != 'onMessage':
+                # Commands 'trigger' is not onMessage, stops
+                return
 
-        if row[1] != 'onMessage':
-            # Commands 'trigger' is not onMessage, stops
-            return
-
-        if len(userinput) > 1 and userinput[1] == 'help':
-            # Outputs help text if 1st arg is 'help'
-            await message.channel.send('Help for ' + name + ':\n' + row[3])
-        # TODO:
-        # This is where the code for the multiple returns would go if it existed
-        # IE custom quotes
-        else:
-            # Outputs content of command
-            await message.channel.send(row[2])
+            if len(userinput) > 1 and userinput[1] == 'help':
+                # Outputs help text if 1st arg is 'help'
+                await message.channel.send('Help for ' + name + ':\n' + row[3])
+            # TODO:
+            # This is where the code for the multiple returns would go if it existed
+            # IE custom quotes
+            else:
+                # Outputs content of command
+                await message.channel.send(row[2])
 
 
 # Handles 'onJoin' custom commands
