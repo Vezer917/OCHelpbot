@@ -245,9 +245,8 @@ async def on_message(message):
         return
 
     userinput = message.content.split(' ')
-    name = userinput[0]
-
-    if name.len() > 1:
+    if len(userinput) > 0:
+        name = userinput[0]
         if name[0] == '!':
             # Removes '!' from beginning of command
             name = name[1:]
