@@ -16,6 +16,8 @@ import threading
 
 # Here's where the bot loads the environmental variables
 # (variables you don't want the public to see)
+import dbcon
+
 load_dotenv()
 token = os.getenv('TOKEN')
 guildid = os.getenv('GUILDID')
@@ -249,7 +251,7 @@ async def on_message(message):
         name = userinput[0]
         if name[0] == '!':
             # Removes '!' from beginning of command
-            name = name[1:]
+            name = dbcon.sanitize(name[1:])
 
             # Checks for a match in the custom commands table
             c.execute("SELECT * FROM customcommands WHERE name='" + name + "';")
@@ -257,6 +259,15 @@ async def on_message(message):
 
             if row is None:
                 # No matching commands were found in database, stops
+                return
+            # TODO:
+            # This is where the code for the multiple returns would go if it existed
+            # IE custom quotes
+            if row[1] == 'multiVal':
+                c.execute(f"SELECT * from multival WHERE name='{name}';")
+                vals = c.fetchall()
+                response = random.choice(vals)
+                await message.channel.send(response[1])
                 return
 
             if row[1] != 'onMessage':
@@ -266,9 +277,7 @@ async def on_message(message):
             if len(userinput) > 1 and userinput[1] == 'help':
                 # Outputs help text if 1st arg is 'help'
                 await message.channel.send('Help for ' + name + ':\n' + row[3])
-            # TODO:
-            # This is where the code for the multiple returns would go if it existed
-            # IE custom quotes
+
             else:
                 # Outputs content of command
                 await message.channel.send(row[2])

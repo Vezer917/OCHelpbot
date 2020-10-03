@@ -51,6 +51,7 @@ class CustomCommand(commands.Cog):
             await ctx.send("What context will it be called on:\n"
                            "**1. onMessage** - will activate when called by user (eg '!pizza')\n"
                            "**2. onJoin** - will notify user upon joining server\n"
+                           "**3. multiVal** - an onMessage that returns a random response from a list of values\n"
                            "(other types coming in future)")
             cmdcontext = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
                                                  timeout=60.0)
@@ -63,9 +64,30 @@ class CustomCommand(commands.Cog):
             if cmdcontext.content.startswith("2") or cmdcontext.content.startswith(
                     "onJ") or cmdcontext.content.startswith("onj"):
                 context = "onJoin"
-            await ctx.send("What will the return value be:\n*(Discord markdown will apply in the return)*")
-            cmdreturn = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
-                                                timeout=60.0)
+            if cmdcontext.content.startswith("3") or cmdcontext.content.startswith(
+                    "mu"):
+                context = "multiVal"
+            # the value the bot returns when the command is called
+            cmdval = ""
+            if context == 'onMessage' or context == 'onJoin':
+                await ctx.send("What will the return value be:\n*(Discord markdown will apply in the return)*")
+                cmdreturn = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
+                                                    timeout=60.0)
+                cmdval = cmdreturn.content
+            if context == 'multiVal':
+                addval = []
+                while(1):
+                    await ctx.send("Enter a return:\n*(enter !stop to stop)*")
+                    val = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
+                                                        timeout=60.0)
+
+                    if val.content == '!stop':
+                        break
+                    else:
+                        addval += [val.content]
+                        continue
+                cmdval = "multival"
+            # the help value
             await ctx.send(f"What will the help value be:\n(what will '!help {cmdname.content}' return?)")
             cmdhelp = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
                                               timeout=60.0)
@@ -73,7 +95,7 @@ class CustomCommand(commands.Cog):
             desc = ""
             desc += "\nName: " + cmdname.content
             desc += "\nContext: " + context
-            desc += "\nReturn: " + cmdreturn.content
+            desc += "\nReturn: " + cmdval
             desc += "\nHelp: " + cmdhelp.content
             embed = discord.Embed(
                 title=cmdname.content,
@@ -89,8 +111,13 @@ class CustomCommand(commands.Cog):
             else:
                 try:
                     sql = "INSERT INTO customcommands (name, context, value, help, author) VALUES (?, ?, ?, ?, ?)"
-                    c.execute(sql, (cmdname.content, context, cmdreturn.content, cmdhelp.content, str(ctx.author)))
+                    c.execute(sql, (cmdname.content, context, cmdval, cmdhelp.content, str(ctx.author)))
                     conn.commit()
+                    if context == 'multiVal':
+                        for add in addval:
+                            sql = "INSERT INTO multival (name, value) VALUES (?,?)"
+                            c.execute(sql, (cmdname.content, add))
+                            conn.commit()
                     await ctx.send("Command added")
                 except sqlite3.Error as e:
                     print(type(e).__name__)
