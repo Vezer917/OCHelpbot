@@ -2,8 +2,8 @@ from discord.ext import commands
 from datetime import datetime
 import pytz
 
-# The time command should return the current time, but not neccesarily the local time
-# of whereever the bot is being hosted
+# The time command should return the current time in PST
+# This command could be expanded to allow for more functionality, such as reminders, schedules, etc.
 
 
 class Time(commands.Cog):

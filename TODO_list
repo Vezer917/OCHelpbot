@@ -1,7 +1,7 @@
 Feature TODO list:
 
 COMMANDS:
-# [ ] Allow custom commands to handle multiple returns (random quote lists)
+# [X] Allow custom commands to handle multiple returns (random quote lists)
          - This has been implemented in the "profquotes" command
          - Possible ways to do this are to have a special character seperating multiple returns and have the bot
            automatically identify it... such as a "@" or "^"
@@ -9,18 +9,18 @@ COMMANDS:
          - Ideally, this command would be robust enough to create quizzes, modify quizzes, start quizzes, and show quiz
            stats.
          - Answering quizzes could be in the form of reactions for multiple choice, or using a String comparator
-# [ ] Addlink command
+# [X] Addlink command
          - Could make "!links add" instead of new command.
 # [ ] Music Player
 # [X] Separate commands into 'cogs' (work in progress)
 # [ ] Poll command - conduct polls using message reactions
 # [ ] ImportantDates command (would be cool if it only gave upcoming events)
-# [ ] More robust roll_dice command
+# [X] More robust roll_dice command
           - Would be nice to be able to specify number of dice, number of sides and number of rolls and perhaps return
             probability
 # [ ] Pi command - return pi to n digits
           - Currently in progress (having problems implementing the default Math library)
-# [ ] Custom commands from discord
+# [X] Custom commands from discord
           - Copy flask custom command
 
 
@@ -35,4 +35,4 @@ Other Features:
 # [ ] Welcome new users with embedded cool looking message
 # [ ] Clean up code to remove all "userinput" strings and replace with proper arguments (eg '*, args')
 # [ ] All SQL calls must be rewritten to prevent injection (Currently most of them use string building which is bad)
-# [ ] Switch to PostgreSQL from SQLite database
+# [ ] Switch over to SQLAlchemy for all SQL

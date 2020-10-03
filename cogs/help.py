@@ -48,7 +48,7 @@ class Help(commands.Cog):
             rows = c.fetchall()
             customcmds = ""
             for row in rows:
-                if row[1] == 'onMessage':
+                if row[1] == 'onMessage' or row[1] == 'multiVal':
                     customcmds += f'!{row[0]}\n'
                 if row[1] == 'onJoin':
                     customcmds += row[0] + " *(onJoin)*\n"
@@ -86,7 +86,7 @@ class Help(commands.Cog):
             cmdhelp = ""
             cmdname = arg
             # Checks for custom commands
-            c.execute("SELECT * FROM customcommands WHERE name='" + arg + "';")
+            c.execute("SELECT * FROM customcommands WHERE name='" + arg + "' COLLATE NOCASE;")
             row = c.fetchone()
 
             if row is not None:

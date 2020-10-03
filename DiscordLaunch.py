@@ -222,7 +222,7 @@ async def on_message(message):
             name = dbcon.sanitize(name[1:])
 
             # Checks for a match in the custom commands table
-            c.execute("SELECT * FROM customcommands WHERE name='" + name + "';")
+            c.execute(f"SELECT * FROM customcommands WHERE name='{name}' COLLATE NOCASE;")
             row = c.fetchone()
 
             if row is None:
@@ -230,7 +230,7 @@ async def on_message(message):
                 return
             # if context is multiVal
             if row[1] == 'multiVal':
-                c.execute(f"SELECT * from multival WHERE name='{name}';")
+                c.execute(f"SELECT * from multival WHERE name='{name}' COLLATE NOCASE;")
                 vals = c.fetchall()
                 response = random.choice(vals)
                 await message.channel.send(response[1])

@@ -37,7 +37,7 @@ class Links(commands.Cog):
             c.execute(f"SELECT course, url, description FROM links WHERE course='{name}' COLLATE NOCASE;")
             info = c.fetchall()
             # If there is no course specified but you are in a course channel (ie 'cosc111_computer-programming')
-            if info is not None:
+            if len(info) >= 1:
                 await ctx.send("*Warning: Follow links at your own risk!*")
                 coursename = str.upper(name)
                 counter = 0
