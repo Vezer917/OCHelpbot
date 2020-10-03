@@ -33,7 +33,7 @@ c = conn.cursor()
 bot.remove_command('help')
 # define the cogs
 cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand', 'cogs.links', 'cogs.time',
-        'cogs.autoreacts']
+        'cogs.autoreacts', 'cogs.profquote']
 
 
 @bot.event
@@ -66,38 +66,6 @@ async def echo(ctx):
     print(f'"{message_to_send.content}"')
     await channelID.send(message_to_send.content)
     return
-
-
-@bot.command(name='profquote', help='Responds with a random profquote')
-async def prof_quote(ctx):
-    userinput = ctx.message.content.split(' ')
-    if len(userinput) < 2:
-        c.execute('SELECT quote, prof FROM profquotes')
-    else:
-        c.execute("SELECT quote, prof FROM profquotes WHERE prof='" + userinput[1] + "';")
-    pq = c.fetchall()
-    response = random.choice(pq)
-    await ctx.send(str(response[0]) + " - " + str(response[1]))
-
-
-@bot.command(name='addquote', help='Add a profquote')
-async def add_quote(ctx):
-    userinput = ctx.message.content.split(' ')
-    if len(userinput) < 3:
-        # outputted if addquote is used incorrectly
-        await ctx.send(
-            "To add a profquote, follow this syntax:\n"
-            "!addquote Leslie \"I only sniff markers because I like the smell\"\n"
-        )
-    else:
-        quote = ctx.message.content.split('"')
-        c.execute("SELECT quote FROM profquotes WHERE quote='\"" + str(quote[1]) + "\"'")
-        if c.fetchone() is not None:
-            await ctx.send("That quote already exists")
-        else:
-            c.execute("INSERT INTO profquotes VALUES('\"" + str(quote[1]) + "\"', '" + str(userinput[1]) + "');")
-            conn.commit()
-            await ctx.send("Quote added")
 
 
 @bot.command(name='createchannel', aliases=['newchannel', 'makechannel', 'addchannel'], hidden=True)
@@ -260,9 +228,7 @@ async def on_message(message):
             if row is None:
                 # No matching commands were found in database, stops
                 return
-            # TODO:
-            # This is where the code for the multiple returns would go if it existed
-            # IE custom quotes
+            # if context is multiVal
             if row[1] == 'multiVal':
                 c.execute(f"SELECT * from multival WHERE name='{name}';")
                 vals = c.fetchall()
