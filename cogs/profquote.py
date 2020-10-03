@@ -1,8 +1,5 @@
-import sqlite3
-from random import random
-
+import random
 from discord.ext import commands
-import discord
 import dbcon
 
 conn = dbcon.conn
@@ -16,19 +13,18 @@ class ProfQuote(commands.Cog):
 
     @commands.command(
         name='profquote',
-        help="Responds with a random profquote\n(You can specify the prof with ",
+        help="Responds with a random profquote\n(You can specify the prof, ie `!profquote Ken`)",
         aliases=['pq', 'profq', 'pquote']
     )
-    async def prof_quote(self, ctx):
-        userinput = ctx.message.content.split(' ')
-        if len(userinput) < 2:
+    async def prof_quote(self, ctx, *, args=None):
+        if args is None:
             c.execute('SELECT quote, prof FROM profquotes')
         else:
-            c.execute("SELECT quote, prof FROM profquotes WHERE prof='" + userinput[1] + "';")
-            if c.rowcount == 0:
-                await ctx.send('No profquotes by that prof found')
-                return
+            dbcon.sanitize(args)
+            c.execute(f"SELECT quote, prof FROM profquotes WHERE prof='{args}';")
         pq = c.fetchall()
+        if len(pq) == 0:
+            await ctx.send(f"No quote from {args} found :man_shrugging:")
         response = random.choice(pq)
         await ctx.send(str(response[0]) + " - " + str(response[1]))
 
@@ -38,7 +34,6 @@ class ProfQuote(commands.Cog):
         aliases=['aq', 'addprofquote', 'addpq']
     )
     async def add_quote(self, ctx):
-        userinput = ctx.message.content.split(' ')
         await ctx.send("Please tell me who said the quote:\n*Example: Leslie*")
         prof = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
                                        timeout=60.0)
@@ -46,7 +41,7 @@ class ProfQuote(commands.Cog):
         await ctx.send("Great, now tell me the quote:\n*Please do not include the quotation marks!*")
         quote = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author,
                                         timeout=60.0)
-        quote = f'"{quote.content}"'
+        quote = f'{quote.content}'
         c.execute(f"SELECT quote FROM profquotes WHERE quote='\"{quote}\"'")
         if c.fetchone() is not None:
             await ctx.send("That quote already exists")
