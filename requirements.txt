@@ -1,3 +1,4 @@
+requests
 discord
 python-dotenv
 flask

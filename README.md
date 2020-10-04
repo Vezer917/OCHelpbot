@@ -30,7 +30,6 @@ Discord Commands:
 
 UPCOMING FUNCTIONALITY:
 =======================
-- !addlink command
 - add quizzes with flask forms
 - add multiple return commands from flask
 
@@ -81,6 +80,8 @@ following template:
 TOKEN=your_token_here
 DATABASE_FILE = "your_db_here"
 GUILDID=your_guild_ID_number_here
+DEFINE_ID=the_dictionary_API_ID
+DEFINE_KEY=the_dictionary_API_KEY
 ```
 
 6. **Configuration of database**

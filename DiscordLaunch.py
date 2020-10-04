@@ -33,7 +33,7 @@ c = conn.cursor()
 bot.remove_command('help')
 # define the cogs
 cogs = ['cogs.quiz', 'cogs.courseinfo', 'cogs.help', 'cogs.rolldice', 'cogs.customcommand', 'cogs.links', 'cogs.time',
-        'cogs.autoreacts', 'cogs.profquote']
+        'cogs.autoreacts', 'cogs.profquote', 'cogs.define']
 
 
 @bot.event
