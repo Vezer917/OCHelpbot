@@ -5,8 +5,8 @@ import requests
 
 
 # define uses the Oxford Dictionary API
-# should iterate through different meanings
-# should not respond to offensive words
+# - should iterate through different meanings
+# - should not respond to offensive words
 
 
 class Define(commands.Cog):
@@ -14,7 +14,7 @@ class Define(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="define")
+    @commands.command(name="define", help='Returns the definition of a word.')
     async def define(self, ctx, arg=None):
         if arg is None:
             await ctx.send("What **word** would you like the definition of?")

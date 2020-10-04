@@ -7,14 +7,17 @@ import dbcon
 conn = dbcon.conn
 c = dbcon.c
 
-# list of words that cannot be customcommand name
-nouse = ['rank', 'help', 'marco', 'quiz', 'customcommand', 'echo']
+# list of words that cannot be customcommand name, basically all the hardcoded commands
+# (I'm sure there's a way to gather them all without manually having to type them out)
+nouse = ['rank', 'help', 'marco', 'quiz', 'customcommand', 'echo','profquote','addquote','define',
+         'rolldice','time','makequiz','help','addquestion','courseinfo','quizlist','arginfo',
+         'links','addlink','delquiz','makeFlaskAdmin']
 
 
 # The customcommand command should have the following functionality:
-# - Add command
-# - Modify command
-# - Delete command
+# [X] Add command
+# [ ] Modify command
+# [X] Delete command
 
 
 class CustomCommand(commands.Cog):
