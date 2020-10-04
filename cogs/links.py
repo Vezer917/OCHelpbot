@@ -142,8 +142,7 @@ class Links(commands.Cog):
                        "\n**WARNING: CANNOT BE UNDONE**")
         link = await self.bot.wait_for('message', check=lambda message: message.author == ctx.author, timeout=60.0)
         link = dbcon.sanitize(link.content)
-        c.execute(f"SELECT description FROM links WHERE description='{link}' COLLATE NOCASE IN "
-                  f"(SELECT course FROM links WHERE course='{coursename}' COLLATE NOCASE); ")
+        c.execute(f"SELECT description, course FROM links WHERE description='{link}' AND course='{coursename}' COLLATE NOCASE;")
         verify = c.fetchone()
         if verify is None:
             await ctx.send("Link not found")
