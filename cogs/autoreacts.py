@@ -18,78 +18,74 @@ class AutoReact(commands.Cog):
         for word in words:
             # HARDCODED EMOJIS
             # ================
-            if word == "cool":
-                await message.add_reaction(u"\U0001F60E")
+            if word == "alien":
+                await message.add_reaction(u"\U0001F47D")
+            if word == "birthday":
+                await message.add_reaction(u"\U0001F382")
             if word == "bot" or word == "robot":
                 await message.add_reaction(u"\U0001F916")
+            if word == "clown":
+                await message.add_reaction(u"\U0001F921")
+            if word == "cool":
+                await message.add_reaction(u"\U0001F60E")
+            if word == "cookie":
+                await message.add_reaction(u"\U0001F36A")
+            if word == "halloween" or word == "pumpkin":
+                await message.add_reaction(u"\U0001F383")
             if word == "nerd":
                 await message.add_reaction(u"\U0001F913")
             if word == "pizza":
                 await message.add_reaction(u"\U0001F355")
-            if word == "cookie":
-                await message.add_reaction(u"\U0001F36A")
-            if word == "birthday":
-                await message.add_reaction(u"\U0001F382")
-            if word == "clown":
-                await message.add_reaction(u"\U0001F921")
-            if word == "halloween" or word == "pumpkin":
-                await message.add_reaction(u"\U0001F383")
-            if word == "alien":
-                await message.add_reaction(u"\U0001F47D")
             if word == "rocket" or word == "elon":
                 await message.add_reaction(u"\U0001F680")
             # SERVER SPECIFIC EMOJIS
             # ======================
             # put a backwards slash '\' infront of an emoji and send in discord to get the emoji's ID
+            if word == "alan":
+                alaned = self.bot.get_emoji(428236272973381633)
+                if alaned is not None:
+                    await message.add_reaction(alaned)
+            if word == "aliens":
+                aliens = self.bot.get_emoji(428621442100363274)
+                if aliens is not None:
+                    await message.add_reaction(aliens)
             if word == "deb":
                 debbed = self.bot.get_emoji(428621135790473217)
                 if debbed is not None:
                     await message.add_reaction(debbed)
                 await message.add_reaction(u"\U0001F47D")
-            if word == "aliens":
-                aliens = self.bot.get_emoji(428621442100363274)
-                if aliens is not None:
-                    await message.add_reaction(aliens)
-            if word == "ken" or word == "chidlow":
-                kenned = self.bot.get_emoji(510487098902577153)
-                if kenned is not None:
-                    await message.add_reaction(kenned)
-            if word == "alan":
-                alaned = self.bot.get_emoji(428236272973381633)
-                if alaned is not None:
-                    await message.add_reaction(alaned)
-            if word == "olga" or word == "however":
-                olgad = self.bot.get_emoji(516694436919377921)
-                if olgad is not None:
-                    await message.add_reaction(olgad)
+            if word == "fritter":
+                frit = self.bot.get_emoji(760298475014586398)
+                if frit is not None:
+                    await message.add_reaction(frit)
+            if word == "fritted" or word == "frit" or word == "fritt":
+                fritted = self.bot.get_emoji(760295741633069056)
+                if fritted is not None:
+                    await message.add_reaction(fritted)
             if word == "jim" or word == "jn":
                 jimmed = self.bot.get_emoji(537695339973443608)
                 if jimmed is not None:
                     await message.add_reaction(jimmed)
-            if word == "sentient" or word == "google":
-                sentient = self.bot.get_emoji(759478319829483576)
-                if sentient is not None:
-                    await message.add_reaction(sentient)
-            if word == "moron" or word == "stupid" or word == "dumb":
-                te = self.bot.get_emoji(378076512231882753)
-                if te is not None:
-                    await message.add_reaction(te)
-            if word == "python":
-                py = self.bot.get_emoji(742823114651730041)
-                if py is not None:
-                    await message.add_reaction(py)
+            if word == "ken" or word == "chidlow":
+                kenned = self.bot.get_emoji(510487098902577153)
+                if kenned is not None:
+                    await message.add_reaction(kenned)
             if word == "linux":
                 lin = self.bot.get_emoji(759599562124951603)
                 if lin is not None:
                     await message.add_reaction(lin)
-            if word == "frit" or word == "fritter" or word == "fritt":
-                frit = self.bot.get_emoji(760298475014586398)
-                if frit is not None:
-                    await message.add_reaction(frit)
-            if word == "fritted" or word == "microservice" or word == "kubernetes":
-                fritted = self.bot.get_emoji(760295741633069056)
-                if fritted is not None:
-                    await message.add_reaction(fritted)
+            if word == "olga" or word == "however":
+                olgad = self.bot.get_emoji(516694436919377921)
+                if olgad is not None:
+                    await message.add_reaction(olgad)
+            if word == "python":
+                py = self.bot.get_emoji(742823114651730041)
+                if py is not None:
+                    await message.add_reaction(py)
+            if word == "sentient" or word == "google":
+                sentient = self.bot.get_emoji(759478319829483576)
+                if sentient is not None:
+                    await message.add_reaction(sentient)
             if word == "youry" or word == "youry.":
                 yuried = self.bot.get_emoji(760297062104301570)
                 if yuried is not None:
