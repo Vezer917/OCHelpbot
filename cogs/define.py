@@ -2,7 +2,7 @@ import os
 
 from discord.ext import commands
 import requests
-
+from dbcon import sanitize
 
 # define uses the Oxford Dictionary API
 # - should iterate through different meanings
@@ -27,7 +27,7 @@ class Define(commands.Cog):
 
         endpoint = "entries"
         language_code = "en-us"
-        word_id = arg
+        word_id = sanitize(arg)
         url = "https://od-api.oxforddictionaries.com/api/v2/" + endpoint + "/" + language_code + "/" + word_id.lower()
         async with ctx.typing():
             r = requests.get(url, headers={"app_id": app_id, "app_key": app_key})

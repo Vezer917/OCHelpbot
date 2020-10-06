@@ -1,27 +1,17 @@
 Feature TODO list:
 
 COMMANDS:
-# [X] Allow custom commands to handle multiple returns (random quote lists)
-         - This has been implemented in the "profquotes" command
-         - Possible ways to do this are to have a special character seperating multiple returns and have the bot
-           automatically identify it... such as a "@" or "^"
+
+# [ ] Add a way to modify customcommands
 # [X] Quiz command
          - Ideally, this command would be robust enough to create quizzes, modify quizzes, start quizzes, and show quiz
            stats.
          - Answering quizzes could be in the form of reactions for multiple choice, or using a String comparator
-# [X] Addlink command
-         - Could make "!links add" instead of new command.
 # [ ] Music Player
-# [X] Separate commands into 'cogs' (work in progress)
 # [ ] Poll command - conduct polls using message reactions
 # [ ] ImportantDates command (would be cool if it only gave upcoming events)
-# [X] More robust roll_dice command
-          - Would be nice to be able to specify number of dice, number of sides and number of rolls and perhaps return
-            probability
 # [ ] Pi command - return pi to n digits
           - Currently in progress (having problems implementing the default Math library)
-# [X] Custom commands from discord
-          - Copy flask custom command
 
 
 FLASK:

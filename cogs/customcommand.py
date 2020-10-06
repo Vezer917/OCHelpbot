@@ -9,9 +9,9 @@ c = dbcon.c
 
 # list of words that cannot be customcommand name, basically all the hardcoded commands
 # (I'm sure there's a way to gather them all without manually having to type them out)
-nouse = ['rank', 'help', 'marco', 'quiz', 'customcommand', 'echo','profquote','addquote','define',
-         'rolldice','time','makequiz','help','addquestion','courseinfo','quizlist','arginfo',
-         'links','addlink','delquiz','makeFlaskAdmin']
+nouse = ['rank', 'help', 'marco', 'quiz', 'customcommand', 'echo','profquote','addquote','define','createchannel',
+         'rolldice','time','makequiz','help','addquestion','courseinfo','quizlist','arginfo','register',
+         'links','addlink','delquiz','makeFlaskAdmin','deletelink','echo_on_join','channeltype','whois','whoami']
 
 
 # The customcommand command should have the following functionality:

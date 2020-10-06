@@ -188,25 +188,6 @@ async def on_command_error(ctx, error):
         await ctx.send('You do not have the correct role for this command.')
 
 
-@bot.command(name='it', help='Responds with a random quote from The IT Crowd', hidden=True)
-async def it_crowd(ctx):
-    it_crowd_quotes = [
-        'There was a fire...*at a Sea Parks?*',
-        'Balloons explode, Jen. They explode suddenly, and unexpectedly. '
-        'They are filled with the capacity to give me a little fright, and I find that unbearable.',
-        'Shut up, do what I tell you, I\'m not interested; these are just some of the things you\'ll be hearing if you answer this ad.'
-        'I\'m an idiot and I don\'t care about anyone but myself. P.S. No dogs!',
-        (
-            'You wouldn\'t steal a handbag. You wouldn\'t steal a car. You wouldn\'t steal a baby. You wouldn\'t shoot a policeman. '
-            'And then steal his helmet. You wouldn\'t go to the toilet in his helmet. And then send it to the policeman\'s grieving widow. '
-            'And then steal it again! Downloading films is stealing. If you do it, you will face the consequences.'
-        ),
-
-    ]
-    response = random.choice(it_crowd_quotes)
-    await ctx.send(response)
-
-
 # handles 'onMessage' custom commands
 @bot.listen('on_message')
 async def on_message(message):
