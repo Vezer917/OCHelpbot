@@ -14,6 +14,9 @@ class AutoReact(commands.Cog):
     # auto emoji reactions
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.author.bot:
+            # Stops it from replying to bots
+            return
         words = message.content.lower().split()
         for word in words:
             # HARDCODED EMOJIS
@@ -22,7 +25,7 @@ class AutoReact(commands.Cog):
                 await message.add_reaction(u"\U0001F47D")
             if word == "birthday":
                 await message.add_reaction(u"\U0001F382")
-            if word == "bot" or word == "robot":
+            if word == "automaton" or word == "robot":
                 await message.add_reaction(u"\U0001F916")
             if word == "clown":
                 await message.add_reaction(u"\U0001F921")
@@ -82,7 +85,7 @@ class AutoReact(commands.Cog):
                 py = self.bot.get_emoji(742823114651730041)
                 if py is not None:
                     await message.add_reaction(py)
-            if word == "sentient" or word == "google":
+            if word == "sentient" or word == "self-aware":
                 sentient = self.bot.get_emoji(759478319829483576)
                 if sentient is not None:
                     await message.add_reaction(sentient)
