@@ -26,3 +26,4 @@ Other Features:
 # [ ] Clean up code to remove all "userinput" strings and replace with proper arguments (eg '*, args')
 # [ ] All SQL calls must be rewritten to prevent injection (Currently most of them use string building which is bad)
 # [ ] Switch over to SQLAlchemy for all SQL
+# [ ] Rewrite all variable names to follow PEP8 guidelines.

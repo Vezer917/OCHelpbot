@@ -47,7 +47,7 @@ async def on_ready():
 # Below are the actual commands for the bot that will eventually end up in Cogs.
 # What is a Cog? A Cog is an easy way to divide parts of your program into separate files.
 # This will make it much easier to separate our command groups. (Quiz, Help, etc.)
-#
+# The only commands that should be here are system commands that we don't want users to see.
 # Set hidden=True if you don't want the command to show up when '!help' is called.
 
 
@@ -101,9 +101,11 @@ async def marco(ctx):
     await ctx.channel.send('polo')
 
 
+# CURRENTLY DISABLED
 # This command should be in its own cog and streamlined to wait for user input
 @bot.command(name='register', help='Allows you to input information about yourself into the bot', hidden=True)
 async def register(ctx):
+    return
     # Checks if they already have a database row
     c.execute('SELECT * FROM users WHERE id=' + str(ctx.author.id))
     if c.fetchone() is None:
@@ -199,6 +201,9 @@ async def on_message(message):
     if len(userinput) > 0:
         name = userinput[0]
         if name[0] == '!':
+            # log the command and who called it for debugging purposes
+            print(f'Command "{userinput[0]}" called by user "{message.author}" in channel "{message.channel}"')
+
             # Removes '!' from beginning of command
             name = dbcon.sanitize(name[1:])
 
@@ -237,7 +242,7 @@ async def on_member_join(member):
     c.execute("SELECT * FROM customcommands WHERE context='onJoin'")
     rows = c.fetchall()
     # Adds all custom messages to the intro separated by newlines
-    output = 'Welcome to ' + member.guild.name + '!\n'
+    output = f'Welcome to **{member.guild.name}**!\nPlease read the rules in the **rules-and-conduct** channel before posting.\n'
     for row in rows:
         output += row[2] + '\n'
     # Sends result to users dms
