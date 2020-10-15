@@ -21,7 +21,7 @@ class ProfQuote(commands.Cog):
             c.execute('SELECT quote, prof FROM profquotes')
         else:
             dbcon.sanitize(args)
-            c.execute(f"SELECT quote, prof FROM profquotes WHERE prof='{args}';")
+            c.execute(f"SELECT quote, prof FROM profquotes WHERE prof='{args}' COLLATE NOCASE;")
         pq = c.fetchall()
         if len(pq) == 0:
             await ctx.send(f"No quote from {args} found :man_shrugging:")
