@@ -13,10 +13,14 @@ class RollDice(commands.Cog):
     @commands.command(
         name='rolldice',
         help='Rolls dice. \nParameters: !rolldice [no of dice] [no of sides]'
-             '\nExample: !rolldice 2 21\nOutput: 13, 17',
+             '\nExample: !rolldice 2 21\nOutput: 13, 17\n*max 100 dice, 10000 sides*',
         aliases=['rd', 'roll_dice']
     )
     async def roll(self, ctx, number_of_dice: int = 1, number_of_sides: int = 6):
+        if number_of_dice > 100:
+            number_of_dice = 100
+        if number_of_sides > 10000:
+            number_of_sides = 10000
         dice = [
             str(random.choice(range(1, number_of_sides + 1)))
             for _ in range(number_of_dice)

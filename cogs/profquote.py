@@ -46,7 +46,7 @@ class ProfQuote(commands.Cog):
         if c.fetchone() is not None:
             await ctx.send("That quote already exists")
         else:
-            c.execute("INSERT INTO profquotes VALUES('\"" + quote + "\"', '" + prof + "');")
+            c.execute(f"INSERT INTO profquotes VALUES('\"{quote}\"', '{prof}');")
             conn.commit()
             await ctx.send("Quote added")
 
