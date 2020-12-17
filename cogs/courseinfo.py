@@ -42,7 +42,7 @@ class CourseInfo(commands.Cog):
                 if len(info.pre_req) > 0:
                     desc += "\nPre-reqs: " + info.pre_req
                 if len(info.core_req) > 0:
-                    desc += "\nCore reqs: " + info.core_req
+                    desc += "\nCo-reqs: " + info.core_req
 
                 embed = discord.Embed(
                     title=coursename,
@@ -63,7 +63,7 @@ class CourseInfo(commands.Cog):
         if len(info.pre_req) > 0:
             desc += "\nPre-reqs: " + info.pre_req
         if len(info.core_req) > 0:
-            desc += "\nCore reqs: " + info.core_req
+            desc += "\nCo-reqs: " + info.core_req
 
         embed = discord.Embed(
             title=coursename,
