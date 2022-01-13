@@ -93,6 +93,10 @@ class AutoReact(commands.Cog):
                 yuried = self.bot.get_emoji(760297062104301570)
                 if yuried is not None:
                     await message.add_reaction(yuried)
+            if word == "covid" or word == "omnicron" or word == "omicron":
+                megatron = self.bot.get_emoji(930950428965871658)
+                if megatron is not None:
+                    await message.add_reaction(megatron)
 
 
 def setup(bot):
